@@ -1,7 +1,7 @@
 FlacToMp3
 =========
 
-A simple Python script that goes takes a list of FLAC files and performs the
+A simple Python script that takes a list of FLAC files and performs the
 following operations for each file:
 * Decodes the FLAC file and saves (if any) the metadata present in ID3 tags;
 * Converts the resulting WAV file to MP3, using the maximum compression level
