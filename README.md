@@ -20,7 +20,14 @@ Roadmap
 
 Version 0.1.1 will have the following features:
 * Ability to save the generated MP3 files in a new folder. The user will be
-able to define the path to the MP3 folder as a command line argument.
+able to define the path to the MP3 folder as a command line argument (-d flag).
+* Broaden the range of command line options:
+** Currently, the user can only pass one file name as an argument (if no file is
+given or the argument is not a file, the program crashes);
+** Allow for one or more file names as arguments (-f flag);
+** If no file names are given, the program will go through the contents of the
+current folder and convert any FLAC files it finds;
+* Global file checking and exception handling.
 
 License
 -------
