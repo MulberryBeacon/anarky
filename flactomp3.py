@@ -135,16 +135,16 @@ def some_files_option(arguments):
 # Checks if a folder contains, at least, one file.
 #
 # @param folder Folder to check for files
-# @param suffix File suffix (e.g., check for specific file extensions)
+# @param extension File extension
 # @return True if the folder contains any files; False otherwise
 # *************************************************************************************************
-def folder_has_files(folder, suffix=""):
+def folder_has_files(folder, extension=""):
 	for item in os.listdir(folder):
 		item_path = os.path.join(folder, item)
-		if os.path.isfile(item_path) and item_path.suffix(suffix):
+		if os.path.isfile(item_path) and item.endswith(extension):
 			return True
 
-	print ERROR_NO_FILES.format(suffix)
+	print ERROR_NO_FILES.format(extension)
 	return False
 
 
@@ -257,7 +257,7 @@ def run():
 		sys.exit()
 
 	# Checks if the current folder has any FLAC files
-	if not folder_has_files(folder, EXT_FLAC):
+	if not folder_has_files(os.getcwd(), EXT_FLAC):
 		sys.exit()
 
 	# Main workflow for the single FLAC file
