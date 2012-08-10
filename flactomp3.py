@@ -21,7 +21,7 @@ EXT_WAV = ".wav"
 # Constants :: Error messages
 # -------------------------------------------------------------------------------------------------
 ERROR_OPTION = "Invalid option -- '{0}'"
-ERROR_FILE = "No FLAC files were found in the current folder!"
+ERROR_NO_FILES = "No {0} files were found in the current folder!"
 ERROR_FOLDER = ("The {0} folder either doesn't exist or you don't have the necessary privileges " +
 				"to access it:\n{1}")
 ERROR_NO_FILES_GIVEN = "No FLAC files were given!"
@@ -135,14 +135,16 @@ def some_files_option(arguments):
 # Checks if a folder contains, at least, one file.
 #
 # @param folder Folder to check for files
+# @param suffix File suffix (e.g., check for specific file extensions)
 # @return True if the folder contains any files; False otherwise
 # *************************************************************************************************
-def folder_has_files(folder):
+def folder_has_files(folder, suffix=""):
 	for item in os.listdir(folder):
 		item_path = os.path.join(folder, item)
-		if os.path.isfile(item_path):
+		if os.path.isfile(item_path) and item_path.suffix(suffix):
 			return True
 
+	print ERROR_NO_FILES.format(suffix)
 	return False
 
 
@@ -246,12 +248,16 @@ def encode_wav_mp3(filename, tag_values):
 # -------------------------------------------------------------------------------------------------
 
 # *************************************************************************************************
-# ???
+# Defines the main workflow of the application
 # *************************************************************************************************
 def run():
 
 	# Checks the input arguments
 	if not check_arguments(sys.argv):
+		sys.exit()
+
+	# Checks if the current folder has any FLAC files
+	if not folder_has_files(folder, EXT_FLAC):
 		sys.exit()
 
 	# Main workflow for the single FLAC file
