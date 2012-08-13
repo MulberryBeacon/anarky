@@ -9,14 +9,15 @@ import re
 import subprocess
 import sys
 
+
 # Constants :: Lists and file extensions
 # -------------------------------------------------------------------------------------------------
-OPTIONS = {"help": "--help", "version": "--version", "somefiles": "-f", "directory": "-d",
-		"allFiles": "-F"}
+OPTIONS = {"help": "-h", "version": "-v", "somefiles": "-f", "directory": "-d", "allfiles": "-F"}
 TAG_NAMES = ["TITLE", "ARTIST", "ALBUM", "DATE", "TRACKNUMBER", "TRACKTOTAL", "GENRE"]
 TAG_FLAGS = ["--tt", "--ta", "--tl", "--ty", "--tn", "--tg"]
 EXT_FLAC = ".flac"
 EXT_WAV = ".wav"
+
 
 # Constants :: Error messages
 # -------------------------------------------------------------------------------------------------
@@ -25,93 +26,41 @@ ERROR_NO_FILES = "No {0} files were found in the current folder!"
 ERROR_FOLDER = ("The {0} folder either doesn't exist or you don't have the necessary privileges " +
 				"to access it:\n{1}")
 ERROR_NO_FILES_GIVEN = "No FLAC files were given!"
+ERROR_NO_FOLDER_GIVEN = "No folder name was given!"
+
 
 # Constants :: Information messages
 # -------------------------------------------------------------------------------------------------
-INFO_OPTIONS = ("No options were defined. Every FLAC file in the current folder will be\n" +
-				"converted and the resulting MP3 files stored in the same folder.")
+INFO_HELP = ("Usage: flactomp3 [-f] [filenames] [-d] [folder]\n" +
+			"    -f\n        specify a set of files to convert\n" +
+			"    -d\n        folder in which the generated MP3 files will be saved\n" +
+			"    -h\n        display this help and exit\n" +
+			"    -v\n        output version information and exit\n")
+
+INFO_VERSION = "flactomp3 version 0.1.0\n"
 
 
 # Methods :: Command line options and instructions
 # -------------------------------------------------------------------------------------------------
 
 # *************************************************************************************************
-# Help instructions for the application.
-# *************************************************************************************************
-def help():
-	print "Usage: flactomp3 [-f] [filenames] [-d] [folder]"
-	print "    -f\n        specify a set of files to convert"
-	print "    -d\n        folder in which the generated MP3 files will be saved"
-	print "    --help\n        display this help and exit"
-	print "    --version\n        output version information and exit\n"
-
-
-# *************************************************************************************************
-# Current version of the application.
-# *************************************************************************************************
-def version():
-	print "flactomp3 version 0.1.0\n"
-
-
-# *************************************************************************************************
-# Validates the input command line arguments.
+# Generates a list with the indexes of the used defined input command line arguments.
 #
 # @param arguments List of command line arguments
-# @return True if the program should continue its execution; False otherwise
+# @return List of indexes of the input command line arguments
 # *************************************************************************************************
-def check_arguments(arguments):
+def get_argument_index(arguments):
+	index_list = []
+	for idx, arg in enumerate(arguments):
+		#if re.match("^-[a-zA-Z]$", arg) and arg in OPTIONS.values():
+		if arg.startswith("-"):
+			if arg in OPTIONS.values():
+				index_list.append(idx)
+			else:
+				print ERROR_OPTION.format(arg)
+				return []
 
-	# Checks if no options were set
-	if len(arguments) == 1:
-		version()
-		help()
-		return False
-
-	# Checks if only one input argument is present
-	elif len(arguments) == 2:
-
-		# Checks if the argument is the help option
-		if arguments[1] == OPTIONS["help"]:
-			help()
-
-		# Checks if the argument is the version option
-		elif arguments[1] == OPTIONS["version"]:
-			version()
-
-		else:
-			print ERROR_OPTION.format(arguments[1])
-
-		return False
-
-	# More than one input argument is present
-	else:
-		# Goes through the list of input arguments and looks for invalid options
-		for arg in arguments:
-			if arg.startswith("-") and arg not in OPTIONS.values():
-				print ERROR_OPTION.format(arguments[1])
-				return False
-
-	return True
-
-
-# *************************************************************************************************
-# Validates the "-f" option that allows a user to specify a set of input FLAC files to convert.
-#
-# @param arguments List of command line arguments
-# @return A list with the set of input FLAC files
-# *************************************************************************************************
-def some_files_option(arguments):
-
-	# Goes through the list of input arguments and looks for invalid options
-	for arg in arguments:
-		if arg == OPTIONS["someFiles"]:
-			index = arguments.index(arg) + 1
-			if index == len(arguments):
-				print ERROR_NO_FILES_GIVEN
-				sys.exit()
-
-			#for flac_file in arguments[index:]:
-
+	return index_list
 
 
 # *************************************************************************************************
@@ -119,20 +68,30 @@ def some_files_option(arguments):
 # MP3 files.
 #
 # @param arguments List of command line arguments
+# @return The destination folder
 # *************************************************************************************************
-#def folder_option(arguments):
+def folder_option(arguments):
 
-# Goes through the list of input arguments
-	#for arg in arguments:
-	#	if arg == OPTIONS["directory"]:
-	#		for flac_file in arguments:
+	# Goes through the list of input arguments and looks for the "-d" option
+	for arg in arguments:
+		if arg == OPTIONS["directory"]:
+
+			# Checks if the option is followed by the destination folder
+			index = arguments.index(arg) + 1
+			if index == len(arguments) or arguments[index].startswith("-"):
+				print ERROR_NO_FOLDER_GIVEN
+				sys.exit()
+
+			return arguments[index]
+
+	return null
 
 
 # Methods :: Folder and file library
 # -------------------------------------------------------------------------------------------------
 
 # *************************************************************************************************
-# Checks if a folder contains, at least, one file.
+# Checks if a folder contains, at least, one file with the given extension.
 #
 # @param folder Folder to check for files
 # @param extension File extension
@@ -244,33 +203,59 @@ def encode_wav_mp3(filename, tag_values):
 	subprocess.call(lame)
 
 
+# *************************************************************************************************
+# Implements the main workflow for converting a single FLAC file into MP3.
+#
+# @param filename FLAC audio file name
+# *************************************************************************************************
+def workflow(filename):
+	tags = decode_flac(flac_file)
+	encode_wav_flac(flac_file, tags)
+	encode_wav_mp3(flac_file, tags)
+
+
 # Methods :: Execution and boilerplate
 # -------------------------------------------------------------------------------------------------
 
 # *************************************************************************************************
 # Defines the main workflow of the application
 # *************************************************************************************************
-def run():
+def run(arguments):
 
-	# Checks the input arguments
-	if not check_arguments(sys.argv):
+	# Checks if no arguments were given
+	if len(arguments) == 1:
+		print INFO_VERSION
+		print INFO_HELP
 		sys.exit()
 
-	# Checks if the current folder has any FLAC files
-	if not folder_has_files(os.getcwd(), EXT_FLAC):
+	# Checks if the argument is the help option
+	if arguments[1] == OPTIONS["help"]:
+		print INFO_HELP
 		sys.exit()
 
-	# Main workflow for the single FLAC file
-	#tags = decode_flac(sys.argv[2])
-	#encode_wav_flac(sys.argv[2], tags)
-	#encode_wav_mp3(sys.argv[2], tags)
+	# Checks if the argument is the version option
+	if arguments[1] == OPTIONS["version"]:
+		print INFO_VERSION
+		sys.exit()
+
+
+
+
+	if not check_info_options(arguments):
+		sys.exit()
+
+	# Gets the list of indexes of the input command line arguments
+	index_list = get_argument_index(sys.argv[1:])
+	for idx in index_list:
+		print idx
+#	if index_list
 
 
 # *************************************************************************************************
 # Main function
 # *************************************************************************************************
 def main():
-	run()
+	run(sys.argv)
 
 
 # Standard boilerplate that calls the main() function.
