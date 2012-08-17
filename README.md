@@ -12,6 +12,12 @@ and the metadata retrieved in the previous step;
 Versions
 --------
 
+* version 0.1.1
+	* First stable iteration
+	* Added the "-h", "-v", "-d", "-f" and "-F" options
+	* Refactored major portions of the code, mostly by replacing "hand made"
+	code by Python built-in functions
+
 * version 0.1.0
 	* Initial version
 
@@ -22,11 +28,16 @@ Version 0.1.1 will have the following features:
 * Ability to save the generated MP3 files in a new folder. The user will be
 able to define the path to the MP3 folder as a command line argument (-d flag).
 * Broaden the range of command line options:
-	* Currently, the user can only pass one file name as an argument (if no file is
-given or the argument is not a file, the program crashes);
+	* Currently, the user can only pass one file name as an argument (if no file
+	is given or the argument is not a file, the program crashes);
 	* Allow for one or more file names as arguments (-f flag);
-	* If no file names are given, the program will go through the contents of the
-current folder and convert any FLAC files it finds;
+	* If no file names are given, the program will go through the contents of
+	the current folder and convert any FLAC files it finds;
+* Global file checking and exception handling.
+
+Version 0.1.2 will have the following features:
+* New round of deep testing, bug fixing and code normalization;
+* Add the album cover to the set of metadata copied from FLAC to MP3 files;
 * Global file checking and exception handling.
 
 License
