@@ -16,7 +16,7 @@ Versions
 	* First stable iteration
 	* Added the "-h", "-v", "-d", "-f" and "-F" options
 	* Refactored major portions of the code, mostly by replacing "hand made"
-	code by Python built-in functions
+	code with Python built-in functions
 
 * version 0.1.0
 	* Initial version
