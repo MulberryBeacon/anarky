@@ -3,6 +3,7 @@ FlacToMp3
 
 A simple Python script that takes a list of FLAC files and performs the
 following operations for each file:
+
 * Decodes the FLAC file and saves (if any) the metadata present in ID3 tags;
 * Converts the resulting WAV file to MP3, using the maximum compression level
 and the metadata retrieved in the previous step;
@@ -25,6 +26,7 @@ Roadmap
 -------
 
 Version 0.1.1 will have the following features:
+
 * Ability to save the generated MP3 files in a new folder. The user will be
 able to define the path to the MP3 folder as a command line argument (-d flag).
 * Broaden the range of command line options:
@@ -36,6 +38,7 @@ able to define the path to the MP3 folder as a command line argument (-d flag).
 * Global file checking and exception handling.
 
 Version 0.1.2 will have the following features:
+
 * New round of deep testing, bug fixing and code normalization;
 * Add the album cover to the set of metadata copied from FLAC to MP3 files;
 * Global file checking and exception handling.
