@@ -10,6 +10,44 @@ and the metadata retrieved in the previous step;
 * Encodes the FLAC file with the maximum compression level;
 * Removes the previously extracted WAV files.
 
+Instructions
+------------
+
+The script can be invoked by using the following syntax:
+
+	flactomp3 [-f] [filenames] [-d] [folder]
+
+The available options are:
+
+* -f => Specify a set of files to convert
+* -F => Folder with a set of files to convert
+* -d => Folder in which the generated MP3 files will be saved
+* -h => Display a help message with detailed information regarding the script
+* -v => Output the current version
+
+Examples
+--------
+
+A specific FLAC file is selected and the resulting MP3 file will be stored in
+the current folder (where the script is run).
+
+	flactomp3 -f lovely_song.flac
+
+A specific FLAC file is selected and the resulting MP3 file will be stored in
+the given folder.
+
+	flactomp3 -f lovely_song.flac -d ~/new_songs/
+
+A folder with a set of FLAC files is selected and the resulting MP3 files will
+be stored in the given folder.
+
+	flactomp3 -F ~/songs/ -d ~/new_songs/
+
+A specific FLAC file and a folder with a set of FLAC files are selected, with
+the resulting MP3 files being stored in the given folder.
+
+	flactomp3 -f lovely_song.flac -F ~/lovely_songs/ -d ~/new_songs/
+
 Versions
 --------
 
@@ -27,15 +65,9 @@ Roadmap
 
 Version 0.1.1 will have the following features:
 
-* Ability to save the generated MP3 files in a new folder. The user will be
-able to define the path to the MP3 folder as a command line argument (-d flag).
 * Broaden the range of command line options:
-	* Currently, the user can only pass one file name as an argument (if no file
-	is given or the argument is not a file, the program crashes);
-	* Allow for one or more file names as arguments (-f flag);
 	* If no file names are given, the program will go through the contents of
 	the current folder and convert any FLAC files it finds;
-* Global file checking and exception handling.
 
 Version 0.1.2 will have the following features:
 
