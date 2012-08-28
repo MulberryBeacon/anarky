@@ -52,13 +52,15 @@ Versions
 --------
 
 Version 0.1.1
-	* First stable iteration
-	* Added the "-h", "-v", "-d", "-f" and "-F" options
-	* Refactored major portions of the code, mostly by replacing "hand made"
-	code with Python built-in functions
+
+* First stable iteration
+* Added the "-h", "-v", "-d", "-f" and "-F" options
+* Refactored major portions of the code, mostly by replacing "hand made" code
+with Python built-in functions
 
 Version 0.1.0
-	* Initial version
+
+* Initial version
 
 Roadmap
 -------
