@@ -51,13 +51,13 @@ the resulting MP3 files being stored in the given folder.
 Versions
 --------
 
-* version 0.1.1
+Version 0.1.1
 	* First stable iteration
 	* Added the "-h", "-v", "-d", "-f" and "-F" options
 	* Refactored major portions of the code, mostly by replacing "hand made"
 	code with Python built-in functions
 
-* version 0.1.0
+Version 0.1.0
 	* Initial version
 
 Roadmap
