@@ -13,10 +13,46 @@ TAG_FLAGS = ["--tt", "--ta", "--tl", "--ty", "--tn", "--tg"]
 EXT_FLAC = ".flac"
 EXT_MP3 = ".mp3"
 EXT_WAV = ".wav"
+PLAYLIST = "00. {0} - {1}"
 
 
 # Methods :: File encoding and decoding
 # -------------------------------------------------------------------------------------------------
+
+# *************************************************************************************************
+# Retrieves the cover file from a FLAC audio file.
+#
+# @param filename FLAC audio file name
+# @return The name of the cover file
+# *************************************************************************************************
+def get_cover(filename):
+
+	# Prepares the 'metaflac' program arguments:
+	# --list       => Lists the full stack of metadata
+	# --block-type => Comma-separated list of block types to be included
+	metaflac = ["metaflac", "--list", "--block-type=PICTURE", filename]
+
+	# Prepares the 'grep' program arguments (looks for description parameter)
+	grep = ["grep", "description:"]
+
+	# Prepares the 'sed' program arguments (the regular expression removes the parameter name)
+	sed = ["sed", "s/.*: //"]
+
+	# Invokes the 'metaflac', 'grep' and 'sed' programs to retrieve the cover file name
+	p1 = Popen(metaflac, stdout=PIPE)
+	p2 = Popen(grep, stdin=p1.stdout, stdout=PIPE)
+	p3 = Popen(sed, stdin=p2.stdout, stdout=PIPE)
+	cover = p3.communicate()[0].rstrip("\n")
+
+	# Prepares the 'metaflac' program arguments:
+	# --export-picture-to => Export PICTURE block to a file
+	metaflac = ["metaflac", "--export-picture-to=" + cover, filename]
+
+	# Invokes the 'metaflac' program to retrieve the cover file
+	call(metaflac)
+
+	return cover
+
 
 # *************************************************************************************************
 # Retrieves and stores the ID3 tag values of a FLAC audio file.
@@ -28,11 +64,15 @@ def get_tags(filename):
 	tag_values = []
 	for tag_name in TAG_NAMES:
 
-		# Prepares the 'sed' program arguments
+		# Prepares the 'metaflac' program arguments:
+		# --show-tag => Shows the value of the given tag
+		metaflac = ["metaflac", "--show-tag=" + tag_name, filename]
+
+		# Prepares the 'sed' program arguments (the regular expression removes the tag name)
 		sed = ["sed", "s/.*=//"]
 
 		# Invokes the 'metaflac' and 'sed' programs to retrieve the ID3 tag values
-		p1 = Popen(["metaflac", "--show-tag=" + tag_name, filename], stdout=PIPE)
+		p1 = Popen(metaflac, stdout=PIPE)
 		p2 = Popen(sed, stdin=p1.stdout, stdout=PIPE)
 		tag_values.append(p2.communicate()[0].rstrip("\n"))
 
@@ -91,14 +131,15 @@ def encode_wav_flac(filename, tag_values):
 #
 # @param filename WAV audio file name
 # @param tag_values Values of the ID3 tags
+# @param cover Name of the cover file
 # @param destination Destination folder where the resulting MP3 file will be stored
 # *************************************************************************************************
-def encode_wav_mp3(filename, tag_values, destination=""):
+def encode_wav_mp3(filename, tag_values, cover, destination=""):
 
 	# Prepares the ID3 tags to be passed as parameters of the 'lame' program
 	id3_flags = ["--tt", tag_values[0], "--ta", tag_values[1], "--tl", tag_values[2],
 				"--ty", tag_values[3], "--tn", tag_values[4] + "/" + tag_values[5],
-				"--tg", tag_values[6]]
+				"--tg", tag_values[6], "--ti", cover]
 
 	# Prepares the 'lame' program arguments:
 	# -b 320          => Set the bitrate to 320 kbps
@@ -123,6 +164,9 @@ def encode_wav_mp3(filename, tag_values, destination=""):
 	call(lame)
 
 
+# Methods :: File cleanup
+# -------------------------------------------------------------------------------------------------
+
 # *************************************************************************************************
 # Removes the temporary WAV audio file created during the conversion process.
 #
@@ -136,7 +180,24 @@ def cleanup(filename):
 	rm = ["rm", "-rf"]
 
 	# Replaces the extension of the input file (from FLAC to WAV)
-	rm.append(splitext(filename)[0] + audiolib.EXT_WAV)
+	rm.append(splitext(filename)[0] + EXT_WAV)
 
 	# Invokes the 'rm' program to remove the temporary WAV audio file
 	call(rm)
+
+
+# *************************************************************************************************
+# Creates a playlist file (.m3u extension) for the given album.
+#
+# @param folder Folder that contains an album
+# @param artist Artist name
+# @param album Album name
+# *************************************************************************************************
+def create_playlist(folder, artist, album):
+
+	# Prepares the 'ls' program arguments
+	ls = ["ls", folder]
+
+	# Creates a new file with the specified name and writes the list of files
+	with open(PLAYLIST.format(artist, album), 'w') as output:
+		p = Popen(ls, stdout=output)

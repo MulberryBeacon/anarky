@@ -26,11 +26,13 @@ ERROR_NO_FOLDER_GIVEN = "No folder name was given!"
 ERROR_NO_FILES_GIVEN = "No FLAC files were given!"
 ERROR_NO_FILES = "No {0} files were found in the {1} folder!"
 ERROR_INTERRUPTED = "The program execution was interrupted!"
+ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 
 
 # Constants :: Text formatting
 # -------------------------------------------------------------------------------------------------
 TAB = "    "
+
 
 # *************************************************************************************************
 # Inserts the equivalent of a tab in a string (incremental implementation).
@@ -62,7 +64,7 @@ def indent_rec(number):
 	if (number == 1):
 		return TAB
 
-	return TAB + indent_text_rec(number - 1)
+	return TAB + indent_rec(number - 1)
 
 
 # Constants :: Information messages
@@ -81,50 +83,24 @@ INFO_VERSION = "flactomp3 version 0.1.1\n"
 # -------------------------------------------------------------------------------------------------
 
 # *************************************************************************************************
-# Checks if a file exists and has the given extension.
+# Checks if a folder exists.
 #
-# @param filename File to check
-# @param extension File extension
-# @return True if the file exists and has the given extension; False otherwise
+# @param folder Folder name
+# @return True if the program should continue its execution; False otherwise
 # *************************************************************************************************
-def file_exists(filename, extension=""):
-	file_path = os.path.abspath(filename)
-	if os.path.isfile(file_path) and file_path.endswith(extension):
-		return True
+def folder_exists(folder):
 
-	return False
+	# Checks if a single folder name was given
+	if len(folder) != 1:
+		print ERROR_NO_FOLDER_GIVEN
+		return False
 
+	# Checks if the given folder name is a valid filesystem folder
+	if not os.path.isdir(folder[0]):
+		print ERROR_INVALID_FOLDER.format(folder[0])
+		return False
 
-# *************************************************************************************************
-# Checks if a folder contains, at least, one file with the given extension.
-#
-# @param folder Folder to check for files
-# @param extension File extension
-# @return True if the folder contains any files with the given extension; False otherwise
-# *************************************************************************************************
-def folder_has_files(folder, extension=""):
-	for item in os.listdir(folder):
-		if file_exists(item, extension):
-			return True
-
-	return False
-
-
-# *************************************************************************************************
-# Extracts the names of the files in the given folders.
-#
-# @param folders List of folders
-# @param extension File extension
-# @return A list of file names
-# *************************************************************************************************
-def extract_files(folders, extension=""):
-	files = []
-	for folder in folders:
-		for item in os.listdir(folder):
-			if file_exists(item, extension):
-				files.append(item)
-
-	return files
+	return True
 
 
 # Methods :: Command line options and instructions
@@ -196,17 +172,11 @@ def check_option_first_token(arguments):
 # *************************************************************************************************
 def check_option_folder(folder):
 
-	# Checks if a single folder name was given
-	if len(folder) != 1:
-		print ERROR_NO_FOLDER_GIVEN
-		return False
+	# Checks if a single folder name was given and if it's a valid filesystem folder
+	if not folder_exists(folder):
+		return None
 
-	# Checks if the given folder name is a valid filesystem folder
-	if not os.path.isdir(folder[0]):
-		print ERROR_INVALID_FOLDER.format(folder[0])
-		return False
-
-	return True
+	return os.path.abspath(folder[0])
 
 
 # *************************************************************************************************
@@ -216,42 +186,64 @@ def check_option_folder(folder):
 # @return True if the program should continue its execution; False otherwise
 # *************************************************************************************************
 def check_option_somefiles(files):
-
-	# Checks if one or more file names were given
-	if len(files) == 0:
-		print ERROR_NO_FILES_GIVEN
-		return False
+	result = []
 
 	# Goes through the list of file names
-	for filename in files:
-		if not file_exists(filename, audiolib.EXT_FLAC):
-			print ERROR_INVALID_FILE.format(filename)
-			return False
+	for name in files:
+		filename = os.path.abspath(name)
 
-	return True
+		# Checks if the file exists
+		if not os.path.isfile(filename):
+			print ERROR_INVALID_FILE.format(name)
+			continue
+
+		# Checks if the file has the desired extension (.flac)
+		if not name.endswith(audiolib.EXT_FLAC):
+			print ERROR_WRONG_FILE_TYPE.format(name, audiolib.EXT_FLAC)
+			continue
+
+		result.append(filename)
+
+	# Checks if one or more file names were given
+	if len(result) == 0:
+		print ERROR_NO_FILES_GIVEN
+		return None
+
+	return result
 
 
 # *************************************************************************************************
-# Validates the "-F" option that allows a user to specify a list of folders with FLAC files to
-# convert to MP3.
+# Validates the "-F" option that allows a user to specify a folder with FLAC files to convert to
+# MP3.
 #
 # @return True if the program should continue its execution; False otherwise
 # *************************************************************************************************
-def check_option_allfiles(folders):
+def check_option_allfiles(folder):
 
-	# Checks if one or more folder names were given
-	if len(folder) == 0:
-		print ERROR_NO_FOLDER_GIVEN
-		return False
+	# Checks if a single folder name was given and if it's a valid filesystem folder
+	if not folder_exists(folder):
+		return None
 
-	# Goes through the list of folders and checks if each one contains, at least, one file with the
-	# FLAC extension
-	for folder in folders:
-		if not folder_has_files(folder, audiolib.XT_FLAC):
-			print ERROR_NO_FILES.format(audiolib.EXT_FLAC, folder)
-			return False
+	result = []
 
-	return True
+	# Goes through the list of files in the folder
+	for root, dirs, files in os.walk(folder, topdown=False):
+		for name in files:
+			filename = os.path.join(root, name)
+
+			# Checks if the file has the desired extension (.flac)
+			if not name.endswith(extension):
+				print ERROR_WRONG_FILE_TYPE.format(name, audiolib.EXT_FLAC)
+				continue
+
+			result.append(filename)
+
+	# Checks if one or more valid files were found
+	if len(result) == 0:
+		print ERROR_NO_FILES_GIVEN
+		return None
+
+	return result
 
 
 # *************************************************************************************************
@@ -323,37 +315,53 @@ def run(arguments):
 
 	# Pre-processes the option list
 	options = split_options(arguments)
+	source_flag = False
 
 	# Goes through the list of options
 	for option, values in options.items():
 
 		# Option "-d"
 		if option == OPTIONS["directory"]:
-			if not check_option_folder(values):
+			destination = check_option_folder(values)
+			if destination == None:
+				sys.exit()
+		else:
+			# Option "-f"
+			if option == OPTIONS["somefiles"]:
+				file_list = check_option_somefiles(values)
+
+			# Option "-F"
+			elif option == OPTIONS["allfiles"]:
+				file_list = check_option_allfiles(values)
+
+			if file_list == None:
 				sys.exit()
 
-			destination = os.path.abspath(values[0])
+			files.extend(file_list)
+			source_flag = True
 
-		# Option "-f"
-		elif option == OPTIONS["somefiles"]:
-			if not check_option_somefiles(values):
-				sys.exit()
-
-			files.extend(values)
-
-		# Option "-F"
-		elif option == OPTIONS["allfiles"]:
-			if not check_option_allfiles():
-				sys.exit()
-
-			files.extend(extract_files(values, audiolib.EXT_FLAC))
+	# Checks if any FLAC files were given
+	if not source_flag:
+		print ERROR_NO_FILES_GIVEN
+		sys.exit()
 
 	# Runs the main workflow for each FLAC file
-	for item in files:
+	cover = None
+	for idx, item in enumerate(files):
+	#for item in files:
+
+		# Checks if it's the first iteration
+		if idx == 0:
+			cover = audiolib.get_cover(item)
+
 		tags = audiolib.decode_flac(item)
-		audiolib.encode_wav_flac(item, tags)
-		audiolib.encode_wav_mp3(item, tags, destination)
+		#audiolib.encode_wav_flac(item, tags)
+		audiolib.encode_wav_mp3(item, tags, cover, destination)
 		audiolib.cleanup(item)
+
+		# Checks if it's the last iteration
+		if idx == len(files) - 1:
+			cover = audiolib.get_cover(item)
 
 
 # *************************************************************************************************
