@@ -1,5 +1,5 @@
-FlacToMp3
-=========
+FLAC Manager
+============
 
 A simple Python script that takes a list of FLAC files and performs the
 following operations for each file:
@@ -15,7 +15,7 @@ Instructions
 
 The script can be invoked by using the following syntax:
 
-	flactomp3 [-f] [filenames] [-d] [folder]
+	flacmanager [-f] [filenames] [-d] [folder]
 
 The available options are:
 
@@ -31,22 +31,22 @@ Examples
 A specific FLAC file is selected and the resulting MP3 file will be stored in
 the current folder (where the script is run).
 
-	flactomp3 -f lovely_song.flac
+	flacmanager -f lovely_song.flac
 
 A specific FLAC file is selected and the resulting MP3 file will be stored in
 the given folder.
 
-	flactomp3 -f lovely_song.flac -d ~/new_songs/
+	flacmanager -f lovely_song.flac -d ~/new_songs/
 
 A folder with a set of FLAC files is selected and the resulting MP3 files will
 be stored in the given folder.
 
-	flactomp3 -F ~/songs/ -d ~/new_songs/
+	flacmanager -F ~/songs/ -d ~/new_songs/
 
 A specific FLAC file and a folder with a set of FLAC files are selected, with
 the resulting MP3 files being stored in the given folder.
 
-	flactomp3 -f lovely_song.flac -F ~/lovely_songs/ -d ~/new_songs/
+	flacmanager -f lovely_song.flac -F ~/lovely_songs/ -d ~/new_songs/
 
 Versions
 --------
