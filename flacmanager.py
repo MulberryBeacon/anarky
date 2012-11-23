@@ -4,8 +4,9 @@
 # -------------------------------------------------------------------------------------------------
 from collections import defaultdict
 from itertools import tee, islice, chain, izip
+from miscellaneous import indent
 from subprocess import call
-import audiolib
+import audio
 import os
 import sys
 
@@ -34,47 +35,14 @@ ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 TAB = "    "
 
 
-# *************************************************************************************************
-# Inserts the equivalent of a tab in a string (incremental implementation).
-#
-# @param number Number of tabs
-# @return The concatenation of 'number' occurrences of the tab string
-# *************************************************************************************************
-def indent(number):
-	if (number <= 0):
-		return ""
-
-	text = ""
-	for i in range(0, number):
-		text += TAB
-
-	return text
-
-
-# *************************************************************************************************
-# Inserts the equivalent of a tab in a string (recursive implementation).
-#
-# @param number Number of tabs
-# @return The concatenation of 'number' occurrences of the tab string
-# *************************************************************************************************
-def indent_rec(number):
-	if (number <= 0):
-		return ""
-
-	if (number == 1):
-		return TAB
-
-	return TAB + indent_rec(number - 1)
-
-
 # Constants :: Information messages
 # -------------------------------------------------------------------------------------------------
 INFO_HELP = ("Usage: flactomp3 [-f] [filenames] [-d] [folder]\n" +
-			indent(1) + "-f\n" + indent(2) + "specify a set of files to convert\n" +
-			indent(1) + "-F\n" + indent(2) + "folder with a set of files to convert\n" +
-			indent(1) + "-d\n" + indent(2) + "folder in which the generated MP3 files will be saved\n" +
-			indent(1) + "-h\n" + indent(2) + "display this help and exit\n" +
-			indent(1) + "-v\n" + indent(2) + "output version information and exit\n")
+			indent(TAB, 1) + "-f\n" + indent(TAB, 2) + "specify a set of files to convert\n" +
+			indent(TAB, 1) + "-F\n" + indent(TAB, 2) + "folder with a set of files to convert\n" +
+			indent(TAB, 1) + "-d\n" + indent(TAB, 2) + "folder in which the generated MP3 files will be saved\n" +
+			indent(TAB, 1) + "-h\n" + indent(TAB, 2) + "display this help and exit\n" +
+			indent(TAB, 1) + "-v\n" + indent(TAB, 2) + "output version information and exit\n")
 
 INFO_VERSION = "flactomp3 version 0.1.1\n"
 
@@ -198,8 +166,8 @@ def check_option_somefiles(files):
 			continue
 
 		# Checks if the file has the desired extension (.flac)
-		if not name.endswith(audiolib.EXT_FLAC):
-			print ERROR_WRONG_FILE_TYPE.format(name, audiolib.EXT_FLAC)
+		if not name.endswith(audio.EXT_FLAC):
+			print ERROR_WRONG_FILE_TYPE.format(name, audio.EXT_FLAC)
 			continue
 
 		result.append(filename)
@@ -227,13 +195,13 @@ def check_option_allfiles(folder):
 	result = []
 
 	# Goes through the list of files in the folder
-	for root, dirs, files in os.walk(folder, topdown=False):
+	for root, dirs, files in os.walk(folder[0], topdown=False):
 		for name in files:
 			filename = os.path.join(root, name)
 
 			# Checks if the file has the desired extension (.flac)
-			if not name.endswith(extension):
-				print ERROR_WRONG_FILE_TYPE.format(name, audiolib.EXT_FLAC)
+			if not name.endswith(audio.EXT_FLAC):
+				print ERROR_WRONG_FILE_TYPE.format(name, audio.EXT_FLAC)
 				continue
 
 			result.append(filename)
@@ -242,6 +210,9 @@ def check_option_allfiles(folder):
 	if len(result) == 0:
 		print ERROR_NO_FILES_GIVEN
 		return None
+
+	for stuff in result:
+		print "<", stuff, ">"
 
 	return result
 
@@ -352,16 +323,16 @@ def run(arguments):
 
 		# Checks if it's the first iteration
 		if idx == 0:
-			cover = audiolib.get_cover(item)
+			cover = audio.get_cover(item)
 
-		tags = audiolib.decode_flac(item)
-		#audiolib.encode_wav_flac(item, tags)
-		audiolib.encode_wav_mp3(item, tags, cover, destination)
-		audiolib.cleanup(item)
+		tags = audio.decode_flac(item)
+		audio.encode_wav_flac(item, tags)
+		audio.encode_wav_mp3(item, tags, cover, destination)
+		audio.cleanup(item)
 
 		# Checks if it's the last iteration
 		if idx == len(files) - 1:
-			cover = audiolib.get_cover(item)
+			cover = audio.get_cover(item)
 
 
 # *************************************************************************************************

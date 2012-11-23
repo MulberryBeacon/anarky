@@ -2,8 +2,9 @@
 
 # Module import section
 # -------------------------------------------------------------------------------------------------
-from subprocess import call, PIPE, Popen
+from miscellaneous import isstringempty
 from os.path import basename, join, splitext
+from subprocess import call, PIPE, Popen
 
 
 # Constants :: Lists and file extensions
@@ -44,12 +45,15 @@ def get_cover(filename):
 	p3 = Popen(sed, stdin=p2.stdout, stdout=PIPE)
 	cover = p3.communicate()[0].rstrip("\n")
 
-	# Prepares the 'metaflac' program arguments:
-	# --export-picture-to => Export PICTURE block to a file
-	metaflac = ["metaflac", "--export-picture-to=" + cover, filename]
+	# Checks if the audio file has a cover
+	if not isstringempty(cover):
 
-	# Invokes the 'metaflac' program to retrieve the cover file
-	call(metaflac)
+		# Prepares the 'metaflac' program arguments:
+		# --export-picture-to => Export PICTURE block to a file
+		metaflac = ["metaflac", "--export-picture-to=" + cover, filename]
+
+		# Invokes the 'metaflac' program to retrieve the cover file
+		call(metaflac)
 
 	return cover
 
@@ -139,7 +143,11 @@ def encode_wav_mp3(filename, tag_values, cover, destination=""):
 	# Prepares the ID3 tags to be passed as parameters of the 'lame' program
 	id3_flags = ["--tt", tag_values[0], "--ta", tag_values[1], "--tl", tag_values[2],
 				"--ty", tag_values[3], "--tn", tag_values[4] + "/" + tag_values[5],
-				"--tg", tag_values[6], "--ti", cover]
+				"--tg", tag_values[6]]
+
+	# Checks if the audio file has a cover
+	if not isstringempty(cover):
+		id3_flags.extend(["--ti", cover])
 
 	# Prepares the 'lame' program arguments:
 	# -b 320          => Set the bitrate to 320 kbps
