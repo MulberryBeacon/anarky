@@ -11,6 +11,8 @@ import sys
 
 # Constants :: Information messages
 # -------------------------------------------------------------------------------------------------
+ERROR_INTERRUPTED = "The program execution was interrupted!"
+
 INFO_HELP = ("Usage: flac2wav [OPTION] [input-files] [-d] [destination]\n\n" +
 			"OPTIONS:\n" +
 			indent(1) + "-f\n" + indent(2) + "specify a set of files to convert\n" +
