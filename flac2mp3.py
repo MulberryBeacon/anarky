@@ -13,7 +13,7 @@ import sys
 # -------------------------------------------------------------------------------------------------
 ERROR_INTERRUPTED = "The program execution was interrupted!"
 
-INFO_HELP = ("Usage: wav2flac [OPTION] [input-files] [-d] [destination]\n\n" +
+INFO_HELP = ("Usage: flac2mp3 [OPTION] [input-files] [-d] [destination]\n\n" +
 			"OPTIONS:\n" +
 			indent(1) + "-f\n" + indent(2) + "specify a set of files to convert\n" +
 			indent(1) + "-F\n" + indent(2) + "folder with a set of files to convert\n" +
@@ -21,7 +21,7 @@ INFO_HELP = ("Usage: wav2flac [OPTION] [input-files] [-d] [destination]\n\n" +
 			indent(1) + "-h\n" + indent(2) + "display this help and exit\n" +
 			indent(1) + "-v\n" + indent(2) + "output version information and exit\n")
 
-INFO_VERSION = "wav2flac version 0.0.1\n"
+INFO_VERSION = "flac2mp3 version 0.0.1\n"
 
 
 # Methods :: Execution and boilerplate
@@ -59,11 +59,11 @@ def run(arguments):
 		else:
 			# Option "-f"
 			if option == cli.OPTIONS["somefiles"]:
-				file_list = cli.check_option_somefiles(values, EXTENSIONS["wav"])
+				file_list = cli.check_option_somefiles(values, EXTENSIONS["flac"])
 
 			# Option "-F"
 			elif option == cli.OPTIONS["allfiles"]:
-				file_list = cli.check_option_allfiles(values, EXTENSIONS["wav"])
+				file_list = cli.check_option_allfiles(values, EXTENSIONS["flac"])
 
 			if file_list == None:
 				sys.exit()
@@ -71,14 +71,14 @@ def run(arguments):
 			files.extend(file_list)
 			source_flag = True
 
-	# Checks if any WAV files were given
+	# Checks if any FLAC files were given
 	if not source_flag:
 		print ERROR_NO_FILES_GIVEN
 		sys.exit()
 
-	# Runs the main workflow for each WAV file
+	# Runs the main workflow for each FLAC file
 	for item in files:
-		encode_wav_flac(item)
+		encode_flac_mp3(item)
 
 
 # *************************************************************************************************

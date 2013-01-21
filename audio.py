@@ -115,18 +115,20 @@ def decode_flac_wav(filename):
 
 	# Invokes the 'flac' program to decode the FLAC audio file and retrieves the ID3 tags
 	call(flac)
-	tag_values = get_tags(filename)
+	tags = get_tags(filename)
 
-	return tag_values
+	return tags
 
 
 # *************************************************************************************************
 # Encodes a WAV audio file, generating the corresponding FLAC audio file and storing its ID3 tags.
 #
 # @param filename WAV audio file name
-# @param tag_values Values of the ID3 tags
+# @param tags Values of the ID3 tags
+# @param cover Name of the cover file
+# @param destination Destination folder where the resulting FLAC file will be stored
 # *************************************************************************************************
-def encode_wav_flac(filename, tag_values=[]):
+def encode_wav_flac(filename, tags=[], cover="", destination=""):
 
 	# Prepares the 'flac' program arguments:
 	# -f => Force overwriting of output files
@@ -135,39 +137,32 @@ def encode_wav_flac(filename, tag_values=[]):
 	flac = ["flac", "-f8V"]
 
 	# Prepares the ID3 tags to be passed as parameters of the 'flac' program
-	if tag_values:
-		id3_flags = ["-T", "TITLE=" + tag_values[0], "-T", "ARTIST=" + tag_values[1], "-T", "ALBUM=" +
-					tag_values[2], "-T", "DATE=" + tag_values[3], "-T", "TRACKNUMBER=" + tag_values[4],
-					"-T", "TRACKTOTAL=" + tag_values[5], "-T", "GENRE=" + tag_values[6]]
+	if tags:
+		flac.extend(["-T", "TITLE=" + tags[0], "-T", "ARTIST=" + tags[1], "-T", "ALBUM=" + tags[2],
+					"-T", "DATE=" + tags[3], "-T", "TRACKNUMBER=" + tags[4], "-T", "TRACKTOTAL=" +
+					tags[5], "-T", "GENRE=" + tags[6]])
 
-		flac.extend(id3_flags)
-
-	# Replaces the extension of the input file (from FLAC to WAV)
-	#flac.append(splitext(filename)[0] + EXTENSIONS["wav"])
-	flac.append(filename)
-
-	# Invokes the 'flac' program to encode the WAV audio file with the given ID3 tags
+	# Invokes the 'flac' program to encode the WAV audio file:
+	# * replaces the extension of the input file (from WAV to FLAC)
+	# * updates the path of the output file to match the given destination folder
+	new_filename = join(destination, basename(filename)) if not isstringempty(destination) else filename
+	flac.append(splitext(new_filename)[0] + EXTENSIONS["flac"])
 	call(flac)
+
+	# Checks if the audio file has a cover
+	if not isstringempty(cover):
+		set_cover(new_filename, cover)
 
 
 # *************************************************************************************************
 # Encodes a WAV audio file, generating the corresponding MP3 audio file and storing its ID3 tags.
 #
 # @param filename WAV audio file name
-# @param tag_values Values of the ID3 tags
+# @param tags Values of the ID3 tags
 # @param cover Name of the cover file
 # @param destination Destination folder where the resulting MP3 file will be stored
 # *************************************************************************************************
-def encode_wav_mp3(filename, tag_values, cover, destination=""):
-
-	# Prepares the ID3 tags to be passed as parameters of the 'lame' program
-	id3_flags = ["--tt", tag_values[0], "--ta", tag_values[1], "--tl", tag_values[2],
-				"--ty", tag_values[3], "--tn", tag_values[4] + "/" + tag_values[5],
-				"--tg", tag_values[6]]
-
-	# Checks if the audio file has a cover
-	if not isstringempty(cover):
-		id3_flags.extend(["--ti", cover])
+def encode_wav_mp3(filename, tags=[], cover="", destination=""):
 
 	# Prepares the 'lame' program arguments:
 	# -b 320          => Set the bitrate to 320 kbps
@@ -175,23 +170,41 @@ def encode_wav_mp3(filename, tag_values, cover, destination=""):
 	# --preset insane => Type of the quality settings
 	# --id3v2-only    => Add only a version 2 tag
 	lame = ["lame", "-b", "320", "-q", "0", "--preset", "insane", "--id3v2-only"]
-	lame.extend(id3_flags)
 
-	# Replaces the extension of the input file (from FLAC to WAV)
-	lame.append(splitext(filename)[0] + EXTENSIONS["wav"])
+	# Prepares the ID3 tags to be passed as parameters of the 'lame' program
+	if tags:
+		lame.extend(["--tt", tags[0], "--ta", tags[1], "--tl", tags[2], "--ty", tags[3], "--tn",
+					tags[4] + "/" + tags[5], "--tg", tags[6]])
 
-	# Updates the path of the output file to match the given destination folder and replaces its
-	# extension (from FLAC to MP3)
-	new_filename = basename(filename)
-	new_filename = splitext(new_filename)[0]
-	new_filename = join(destination, new_filename)
-	lame.append(new_filename + EXTENSIONS["mp3"])
+	# Checks if the audio file has a cover
+	if not isstringempty(cover):
+		lame.extend(["--ti", cover])
 
-	# Invokes the 'lame' program to encode the WAV audio file with the given ID3 tags
+	# Invokes the 'lame' program to encode the WAV audio file:
+	# * replaces the extension of the input file (from WAV to MP3)
+	# * updates the path of the output file to match the given destination folder
+	new_filename = join(destination, basename(filename)) if not isstringempty(destination) else filename
+	flac.append(splitext(new_filename)[0] + EXTENSIONS["mp3"])
 	call(lame)
 
 
-# Methods :: File cleanup
+# *************************************************************************************************
+# Decodes a FLAC audio file, generating the corresponding WAV audio file and storing its ID3 tags.
+# The WAV audio file is then encoded, generating the corresponding MP3 audio file and storing its
+# ID3 tags.
+#
+# @param filename WAV audio file name
+# @param tags Values of the ID3 tags
+# @param cover Name of the cover file
+# @param destination Destination folder where the resulting MP3 file will be stored
+# *************************************************************************************************
+def encode_flac_mp3(filename, destination=""):
+	cover = get_cover(filename)
+	tags = decode_flac_wav(filename)
+	encode_wav_mp3(filename, tags, cover, destination)
+
+
+# Methods :: File management
 # -------------------------------------------------------------------------------------------------
 
 # *************************************************************************************************

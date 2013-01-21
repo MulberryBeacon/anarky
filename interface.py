@@ -17,8 +17,11 @@ OPTIONS = {"help": "-h", "version": "-v", "somefiles": "-f", "allfiles": "-F", "
 ERROR_INVALID_OPTION = "Invalid option -- '{0}'"
 ERROR_INVALID_FILE = ("The '{0}' file either doesn't exist or you don't have the necessary " +
 					"privileges to access it!")
+ERROR_INVALID_FOLDER = ("The '{0}' folder either doesn't exist or you don't have the necessary " +
+					"privileges to access it!")
 ERROR_NO_FILES_GIVEN = "No FLAC files were given!"
 ERROR_NO_FILES = "No {0} files were found in the {1} folder!"
+ERROR_NO_FOLDER_GIVEN = "No folder name was given!"
 ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 
 
@@ -199,3 +202,27 @@ def split_options(arguments):
 		options[current[0]].extend(values)
 
 	return options
+
+
+# Methods :: Folder and file library
+# -------------------------------------------------------------------------------------------------
+
+# *************************************************************************************************
+# Checks if a folder exists.
+#
+# @param folder Folder name
+# @return True if the program should continue its execution; False otherwise
+# *************************************************************************************************
+def folder_exists(folder):
+
+	# Checks if a single folder name was given
+	if len(folder) != 1:
+		print ERROR_NO_FOLDER_GIVEN
+		return False
+
+	# Checks if the given folder name is a valid filesystem folder
+	if not os.path.isdir(folder[0]):
+		print ERROR_INVALID_FOLDER.format(folder[0])
+		return False
+
+	return True

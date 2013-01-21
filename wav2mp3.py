@@ -13,15 +13,15 @@ import sys
 # -------------------------------------------------------------------------------------------------
 ERROR_INTERRUPTED = "The program execution was interrupted!"
 
-INFO_HELP = ("Usage: wav2flac [OPTION] [input-files] [-d] [destination]\n\n" +
+INFO_HELP = ("Usage: wav2mp3 [OPTION] [input-files] [-d] [destination]\n\n" +
 			"OPTIONS:\n" +
 			indent(1) + "-f\n" + indent(2) + "specify a set of files to convert\n" +
 			indent(1) + "-F\n" + indent(2) + "folder with a set of files to convert\n" +
-			indent(1) + "-d\n" + indent(2) + "folder in which the generated FLAC files will be saved\n" +
+			indent(1) + "-d\n" + indent(2) + "folder in which the generated MP3 files will be saved\n" +
 			indent(1) + "-h\n" + indent(2) + "display this help and exit\n" +
 			indent(1) + "-v\n" + indent(2) + "output version information and exit\n")
 
-INFO_VERSION = "wav2flac version 0.0.1\n"
+INFO_VERSION = "wav2mp3 version 0.0.1\n"
 
 
 # Methods :: Execution and boilerplate
@@ -78,7 +78,7 @@ def run(arguments):
 
 	# Runs the main workflow for each WAV file
 	for item in files:
-		encode_wav_flac(item)
+		encode_wav_mp3(item)
 
 
 # *************************************************************************************************
