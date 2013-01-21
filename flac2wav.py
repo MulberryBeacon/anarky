@@ -73,12 +73,12 @@ def run(arguments):
 
 	# Checks if any FLAC files were given
 	if not source_flag:
-		print ERROR_NO_FILES_GIVEN
+		print ERROR_NO_FILES_GIVEN.format(EXTENSIONS["flac"])
 		sys.exit()
 
 	# Runs the main workflow for each FLAC file
 	for item in files:
-		decode_flac_wav(item)
+		decode_flac_wav(item, destination)
 
 
 # *************************************************************************************************

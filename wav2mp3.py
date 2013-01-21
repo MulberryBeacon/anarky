@@ -2,7 +2,7 @@
 
 # Module import section
 # -------------------------------------------------------------------------------------------------
-from audio import encode_wav_flac, set_cover, EXTENSIONS
+from audio import encode_wav_mp3, set_cover, EXTENSIONS
 from miscellaneous import indent
 import interface as cli
 import os
@@ -73,12 +73,12 @@ def run(arguments):
 
 	# Checks if any WAV files were given
 	if not source_flag:
-		print ERROR_NO_FILES_GIVEN
+		print ERROR_NO_FILES_GIVEN.format(EXTENSIONS["wav"])
 		sys.exit()
 
 	# Runs the main workflow for each WAV file
 	for item in files:
-		encode_wav_mp3(item)
+		encode_wav_mp3(item, destination)
 
 
 # *************************************************************************************************

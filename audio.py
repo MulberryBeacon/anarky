@@ -104,31 +104,35 @@ def get_tags(filename):
 # Decodes a FLAC audio file, generating the corresponding WAV audio file and storing its ID3 tags.
 #
 # @param filename FLAC audio file name
+# @param destination Destination folder where the resulting FLAC file will be stored
 # @return The values of the metatags
 # *************************************************************************************************
-def decode_flac_wav(filename):
+def decode_flac_wav(filename, destination=""):
 
 	# Prepares the 'flac' program arguments:
 	# -d => Decode (the default behavior is to encode)
 	# -f => Force overwriting of output files
 	flac = ["flac", "-d", "-f", filename]
 
+	# Updates the path of the output file to match the given destination folder
+	if not is_string_empty(destination):
+		flac.extend(["-o", splitext(join(destination, basename(filename)))[0] + EXTENSIONS["wav"]])
+
 	# Invokes the 'flac' program to decode the FLAC audio file and retrieves the ID3 tags
 	call(flac)
-	tags = get_tags(filename)
 
-	return tags
+	return get_tags(filename)
 
 
 # *************************************************************************************************
 # Encodes a WAV audio file, generating the corresponding FLAC audio file and storing its ID3 tags.
 #
 # @param filename WAV audio file name
+# @param destination Destination folder where the resulting FLAC file will be stored
 # @param tags Values of the ID3 tags
 # @param cover Name of the cover file
-# @param destination Destination folder where the resulting FLAC file will be stored
 # *************************************************************************************************
-def encode_wav_flac(filename, tags=[], cover="", destination=""):
+def encode_wav_flac(filename, destination="", tags=[], cover=""):
 
 	# Prepares the 'flac' program arguments:
 	# -f => Force overwriting of output files
@@ -142,15 +146,18 @@ def encode_wav_flac(filename, tags=[], cover="", destination=""):
 					"-T", "DATE=" + tags[3], "-T", "TRACKNUMBER=" + tags[4], "-T", "TRACKTOTAL=" +
 					tags[5], "-T", "GENRE=" + tags[6]])
 
-	# Invokes the 'flac' program to encode the WAV audio file:
-	# * replaces the extension of the input file (from WAV to FLAC)
-	# * updates the path of the output file to match the given destination folder
-	new_filename = join(destination, basename(filename)) if not isstringempty(destination) else filename
-	flac.append(splitext(new_filename)[0] + EXTENSIONS["flac"])
+	# Updates the path of the output file to match the given destination folder
+	flac.append(filename)
+	new_filename = splitext(filename)[0] + EXTENSIONS["flac"]
+	if not is_string_empty(destination):
+		new_filename = join(destination, basename(new_filename))
+		flac.extend(["-o", new_filename])
+
+	# Invokes the 'flac' program to encode the WAV audio file
 	call(flac)
 
 	# Checks if the audio file has a cover
-	if not isstringempty(cover):
+	if not is_string_empty(cover):
 		set_cover(new_filename, cover)
 
 
@@ -158,11 +165,11 @@ def encode_wav_flac(filename, tags=[], cover="", destination=""):
 # Encodes a WAV audio file, generating the corresponding MP3 audio file and storing its ID3 tags.
 #
 # @param filename WAV audio file name
+# @param destination Destination folder where the resulting MP3 file will be stored
 # @param tags Values of the ID3 tags
 # @param cover Name of the cover file
-# @param destination Destination folder where the resulting MP3 file will be stored
 # *************************************************************************************************
-def encode_wav_mp3(filename, tags=[], cover="", destination=""):
+def encode_wav_mp3(filename, destination="", tags=[], cover=""):
 
 	# Prepares the 'lame' program arguments:
 	# -b 320          => Set the bitrate to 320 kbps
@@ -177,14 +184,15 @@ def encode_wav_mp3(filename, tags=[], cover="", destination=""):
 					tags[4] + "/" + tags[5], "--tg", tags[6]])
 
 	# Checks if the audio file has a cover
-	if not isstringempty(cover):
+	if not is_string_empty(cover):
 		lame.extend(["--ti", cover])
 
-	# Invokes the 'lame' program to encode the WAV audio file:
-	# * replaces the extension of the input file (from WAV to MP3)
-	# * updates the path of the output file to match the given destination folder
-	new_filename = join(destination, basename(filename)) if not isstringempty(destination) else filename
-	flac.append(splitext(new_filename)[0] + EXTENSIONS["mp3"])
+	# Updates the path of the output file to match the given destination folder
+	lame.append(filename)
+	if not is_string_empty(destination):
+		lame.append(splitext(join(destination, basename(filename)))[0] + EXTENSIONS["mp3"])
+
+	# Invokes the 'lame' program to encode the WAV audio file
 	call(lame)
 
 
@@ -194,14 +202,13 @@ def encode_wav_mp3(filename, tags=[], cover="", destination=""):
 # ID3 tags.
 #
 # @param filename WAV audio file name
-# @param tags Values of the ID3 tags
-# @param cover Name of the cover file
 # @param destination Destination folder where the resulting MP3 file will be stored
 # *************************************************************************************************
 def encode_flac_mp3(filename, destination=""):
 	cover = get_cover(filename)
 	tags = decode_flac_wav(filename)
-	encode_wav_mp3(filename, tags, cover, destination)
+	new_filename = splitext(filename)[0] + EXTENSIONS["wav"]
+	encode_wav_mp3(new_filename, destination, tags, cover)
 
 
 # Methods :: File management

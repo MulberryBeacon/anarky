@@ -19,7 +19,7 @@ ERROR_INVALID_FILE = ("The '{0}' file either doesn't exist or you don't have the
 					"privileges to access it!")
 ERROR_INVALID_FOLDER = ("The '{0}' folder either doesn't exist or you don't have the necessary " +
 					"privileges to access it!")
-ERROR_NO_FILES_GIVEN = "No FLAC files were given!"
+ERROR_NO_FILES_GIVEN = "No {0} files were given!"
 ERROR_NO_FILES = "No {0} files were found in the {1} folder!"
 ERROR_NO_FOLDER_GIVEN = "No folder name was given!"
 ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
@@ -133,7 +133,7 @@ def check_option_somefiles(files, extension):
 
 	# Checks if one or more file names were given
 	if len(result) == 0:
-		print ERROR_NO_FILES_GIVEN
+		print ERROR_NO_FILES_GIVEN.format(extension)
 		return None
 
 	return result
@@ -166,7 +166,7 @@ def check_option_allfiles(folder, extension):
 
 	# Checks if one or more valid files were found
 	if len(result) == 0:
-		print ERROR_NO_FILES_GIVEN
+		print ERROR_NO_FILES_GIVEN.format(extension)
 		return None
 
 	return result
