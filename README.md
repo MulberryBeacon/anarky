@@ -3,17 +3,20 @@
 A set of simple Python programs that allow a user to manage the conversion
 between several types of audio files.
 
-## **wav2flac**
+## Programs
 
+* `wav2flac` (lossless => lossless)  
 Encodes WAV files into the FLAC format with the maximum compression level.
+* `wav2mp3` (lossless => lossy)  
+Encodes WAV files into the MP3 format with the maximum compression level.
+* `flac2wav` (lossless => lossless)  
+Decodes FLAC files into the WAV format.
+* `flac2mp3` (lossless => lossy)  
+Encodes FLAC files into the MP3 format with the maximum compression level.
 
-### Instructions
+## Instructions
 
-The script can be invoked by using the following syntax:
-
-	wav2flac [OPTION] [input-files] [-d] [destination]
-
-The available options are:
+Each of the programs provides the same set of options:
 
 * -f => Specify a set of files to convert
 * -F => Folder with a set of files to convert
@@ -21,59 +24,22 @@ The available options are:
 * -h => Display a help message with detailed information regarding the script
 * -v => Output the current version
 
-### Examples
+The current syntax requires that both the location of the input and output files
+be defined explicitly:
+
+	[program] [-fF] [input-file(s)] [-d] [destination]
+
+## Examples
 
 A specific WAV file is selected and the resulting FLAC file will be stored in
 the given folder.
 
 	wav2flac -f lovely_song.wav -d ~/new_songs/
 
-A folder with a set of WAV files is selected and the resulting FLAC files will
+A folder with a set of WAV files is selected and the resulting MP3 files will
 be stored in the given folder.
 
-	wav2flac -F ~/songs/ -d ~/new_songs/
-
-## **flac2wav**
-
-Decodes FLAC files into the WAV format.
-
-### Instructions
-
-The script can be invoked by using the following syntax:
-
-	flac2wav [OPTION] [input-files] [-d] [destination]
-
-The available options are:
-
-* -f => Specify a set of files to convert
-* -F => Folder with a set of files to convert
-* -d => Folder in which the generated MP3 files will be saved
-* -h => Display a help message with detailed information regarding the script
-* -v => Output the current version
-
-### Examples
-
-A specific FLAC file is selected and the resulting WAV file will be stored in
-the given folder.
-
-	flac2wav -f lovely_song.flac -d ~/new_songs/
-
-A folder with a set of FLAC files is selected and the resulting WAV files will
-be stored in the given folder.
-
-	flac2wav -F ~/songs/ -d ~/new_songs/
-
-## **wav2mp3**
-
-Encodes WAV files into the MP3 format with the maximum compression level.
-
-### Instructions
-
-Soon...
-
-### Examples
-
-Soon...
+	wav2mp3 -F ~/songs/ -d ~/new_songs/
 
 ## Versions
 
@@ -96,7 +62,6 @@ Version 0.2.0 will have the following features:
 album cover to an image file while decoding the given FLAC files
 * `wav2flac` will have two additional command line arguments to import a text
 file with ID3 tags and an image file with an album cover
-* `wav2mp3` needs to be implemented
 
 ## License
 
