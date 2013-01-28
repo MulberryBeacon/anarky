@@ -1,4 +1,12 @@
 #!/usr/bin/python -tt
+# -*- coding: utf8 -*-
+
+"""
+Encodes WAV files into the MP3 format with the maximum compression level.
+
+Author: Eduardo Ferreira
+License: MIT (see LICENSE for details)
+"""
 
 # Module import section
 # -------------------------------------------------------------------------------------------------

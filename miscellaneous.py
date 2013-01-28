@@ -1,4 +1,12 @@
 #!/usr/bin/python -tt
+# -*- coding: utf8 -*-
+
+"""
+Set of miscellaneous functions.
+
+Author: Eduardo Ferreira
+License: MIT (see LICENSE for details)
+"""
 
 # Module import section
 # -------------------------------------------------------------------------------------------------
