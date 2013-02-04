@@ -17,10 +17,16 @@ from subprocess import call, PIPE, Popen
 
 # Constants :: Lists and file extensions
 # -------------------------------------------------------------------------------------------------
+PLAYLIST = "00. {0} - {1}"
+
 TAG_NAMES = ["TITLE", "ARTIST", "ALBUM", "DATE", "TRACKNUMBER", "TRACKTOTAL", "GENRE"]
 TAG_FLAGS = ["--tt", "--ta", "--tl", "--ty", "--tn", "--tg"]
-EXTENSIONS = {"flac": ".flac", "mp3": ".mp3", "wav": ".wav"}
-PLAYLIST = "00. {0} - {1}"
+
+EXTENSIONS = {
+	"flac": ".flac",
+	"mp3" : ".mp3",
+	"wav" : ".wav"
+}
 
 
 # Methods :: Album cover and ID3 tag management

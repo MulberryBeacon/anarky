@@ -43,25 +43,43 @@ be stored in the given folder.
 
 ## Versions
 
-Version 0.1.1
+Version 0.0.2
 
 * First stable iteration
 * Added the "-h", "-v", "-d", "-f" and "-F" options
 * Refactored major portions of the code, mostly by replacing "hand made" code
 with Python built-in functions
 
-Version 0.1.0
+Version 0.0.1
 
 * Initial version
 
+## Bugs
+
+* `flac2mp3` doesn't remove the temporary WAV files extracted from the input
+FLAC files. The code for this is already implemented (albeit pending a review),
+but it needs to be invoked
+
+* `flac2wav` and `flac2mp3` don't remove the temporary cover file extracted from
+the input FLAC files. Code still needs to be implement to perform this step
+
 ## Roadmap
 
-Version 0.2.0 will have the following features:
+Version 0.0.3 will have the following features:
 
+* With the exception of `flac2wav`, each program will have an additional option
+that, when triggered, will enable the creation of a playlist file (.m3u)
 * `flac2wav` will save any metadata present in ID3 tags to a text file and the
 album cover to an image file while decoding the given FLAC files
 * `wav2flac` will have two additional command line arguments to import a text
 file with ID3 tags and an image file with an album cover
+
+Version 0.0.4 will have the following features:
+
+* A new master control program (nudge nudge, wink wink) that could be used
+instead of the individual programs. It will have two additional options for
+the desired input and output formats, while keep the set of options outlined
+for the current set of programs
 
 ## License
 
