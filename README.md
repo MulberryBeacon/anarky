@@ -18,34 +18,65 @@ Encodes FLAC files into the MP3 format with the maximum compression level.
 
 Each of the programs provides the same set of options:
 
-* -f => Specify a set of files to convert
-* -F => Folder with a set of files to convert
-* -d => Folder in which the generated MP3 files will be saved
-* -h => Display a help message with detailed information regarding the script
-* -v => Output the current version
+    -f, --file
+        set of individual files to convert
+    -p, --playlist
+        create a playlist file
+    -v, --version
+        output version information and exit
+    -h, --help
+        display this help and exit
+    -d, --dir
+        directory with a set of files to convert
+    -e, --dest
+        directory in which the generated files will be saved
+    -c, --cover
+        add an image file with a cover
+    -t, --tags
+        add ID3 tags with the main information
+
+For `flac2wav`, the last two options will be used to extract information from
+files instead of adding it:
+
+    -c, --cover
+        extract an image file with a cover
+    -t, --tags
+        extrac ID3 tags with the main information
 
 The current syntax requires that both the location of the input and output files
 be defined explicitly:
 
-	[program] [-fF] [input-file(s)] [-d] [destination]
+    [program] [OPTION] [-fd] [input-files] [-e] [destination]
 
 ## Examples
 
 A specific WAV file is selected and the resulting FLAC file will be stored in
 the given folder.
 
-	wav2flac -f lovely_song.wav -d ~/new_songs/
+    wav2flac -f lovely_song.wav -e ~/new_songs/
 
 A folder with a set of WAV files is selected and the resulting MP3 files will
 be stored in the given folder.
 
-	wav2mp3 -F ~/songs/ -d ~/new_songs/
+    wav2mp3 -d ~/songs/ -e ~/new_songs/
 
 ## Versions
 
+Version 0.1.0
+
+* Added three new options ("-c", "-p" and "-t") and updated the old options
+* Further generalization of commnand line related methods and migration to the
+interface library
+* Refinement of the audio library
+
+Version 0.0.5
+
+* First stable (and working) version
+* Generalized some of the commnand line related methods and migrated them to a
+new interface library
+
 Version 0.0.2
 
-* First stable iteration
 * Added the "-h", "-v", "-d", "-f" and "-F" options
 * Refactored major portions of the code, mostly by replacing "hand made" code
 with Python built-in functions
@@ -60,26 +91,28 @@ Version 0.0.1
 FLAC files. The code for this is already implemented (albeit pending a review),
 but it needs to be invoked
 
-* `flac2wav` and `flac2mp3` don't remove the temporary cover file extracted from
-the input FLAC files. Code still needs to be implement to perform this step
+* `flac2mp3` doesn't remove the temporary cover file extracted from the input
+FLAC files. Code still needs to be implement to perform this step
+
+* Haven't found a way to dynamically define the artist and album names in the
+playlist file. For now, the strings "artist" and "album" are used, respectively
 
 ## Roadmap
 
-Version 0.0.3 will have the following features:
-
-* With the exception of `flac2wav`, each program will have an additional option
-that, when triggered, will enable the creation of a playlist file (.m3u)
-* `flac2wav` will save any metadata present in ID3 tags to a text file and the
-album cover to an image file while decoding the given FLAC files
-* `wav2flac` will have two additional command line arguments to import a text
-file with ID3 tags and an image file with an album cover
-
-Version 0.0.4 will have the following features:
+Future versions will have the following features:
 
 * A new master control program (nudge nudge, wink wink) that could be used
 instead of the individual programs. It will have two additional options for
 the desired input and output formats, while keep the set of options outlined
 for the current set of programs
+* An installation script that will avoid any manual configuration to make the
+programs globally available in a system (path, location, etc.)
+
+## Requirements
+
+* `lame`
+* `flac`
+* `metaflac`
 
 ## License
 
