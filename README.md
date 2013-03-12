@@ -108,7 +108,7 @@ for the current set of programs
 * An installation script that will avoid any manual configuration to make the
 programs globally available in a system (path, location, etc.)
 
-## Requirements
+## Dependencies
 
 * `lame`
 * `flac`

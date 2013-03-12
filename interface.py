@@ -47,7 +47,6 @@ ERROR_NO_DIRECTORY_GIVEN = "No directory name was given!"
 ERROR_ONLY_ONE_FILE = "Only one {0} file is allowed!"
 ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 
-
 # Methods :: Command line options and instructions
 # -------------------------------------------------------------------------------------------------
 def get_help(name, extract):

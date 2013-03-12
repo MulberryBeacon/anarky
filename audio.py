@@ -17,17 +17,28 @@ from subprocess import call, PIPE, Popen
 # Constants :: Lists and file extensions
 # -------------------------------------------------------------------------------------------------
 PLAYLIST = "00. {0} - {1}.m3u"
-TAGS_FILE = "00. ID3.txt"
+TAGS_FILE = "tags.txt"
 
+"""
+TITLE       : Track/Work name
+ARTIST      : The artist generally considered responsible for the work. In popular music this is usually the performing band or singer. For classical music it would be the composer. For an audio book it would be the author of the original text
+ALBUM       : The collection name to which this track belongs
+TRACKNUMBER : The track number of this piece if part of a specific larger collection or album
+ALBUMARTIST : The artist(s) who performed the work. In classical music this would be the conductor, orchestra, soloists. In an audio book it would be the actor who did the reading. In popular music this is typically the same as the ARTIST and is omitted
+GENRE       : A short text indication of music genre
+DATE        : Date the track was recorded
+DISCTOTAL   : Number of discs that compose the set ("DISCTOTAL" : ["--tv", "TPOS="],)
+TRACKTOTAL  : Number of tracks in the album
+"""
 TAGS = {
 	"TITLE"      : "--tt",
 	"ARTIST"     : "--ta",
-	"ALBUMARTIST": ["--tv", "TPE2="],
 	"ALBUM"      : "--tl",
-	"DATE"       : "--ty",
 	"TRACKNUMBER": "--tn",
-	"TRACKTOTAL" : "",
-	"GENRE"      : "--tg"
+	"ALBUMARTIST": ["--tv", "TPE2="],
+	"GENRE"      : "--tg",
+	"DATE"       : "--ty",
+	"TRACKTOTAL" : ""
 }
 
 EXTENSIONS = {
@@ -35,7 +46,6 @@ EXTENSIONS = {
 	"mp3" : ".mp3",
 	"wav" : ".wav"
 }
-
 
 # Methods :: Album cover and ID3 tag management
 # -------------------------------------------------------------------------------------------------
@@ -78,7 +88,8 @@ def set_cover(filename, cover):
 	"""
 	# Prepares the 'metaflac' program arguments:
 	# --import-picture-to => Import a picture and store it in a PICTURE block
-	metaflac = ["metaflac", "--import-picture-from=" + cover, filename]
+	specification = "||" + basename(cover) + "||" + cover
+	metaflac = ["metaflac", "--import-picture-from=" + specification, filename]
 	call(metaflac)
 
 
@@ -86,12 +97,6 @@ def get_tags(filename, destination):
 	"""
 	Retrieves and stores the ID3 tag values of a FLAC audio file.
 	"""
-	# Prepares the 'metaflac' program arguments:
-	# --export-tags-to => Export tags to a file
-	tags_filename = splitext(join(destination, basename(filename)))[0] + ".txt"
-	metaflac = ["metaflac", "--export-tags-to=" + tags_filename, filename]
-	call(metaflac)
-
 	tags = {}
 	for tag in TAGS:
 
@@ -106,6 +111,9 @@ def get_tags(filename, destination):
 		p1 = Popen(metaflac, stdout=PIPE)
 		p2 = Popen(sed, stdin=p1.stdout, stdout=PIPE)
 		tags[tag] = p2.communicate()[0].rstrip("\n")
+
+	# Creates a tag file
+	create_tag_file(filename, destination)
 
 	return tags
 
@@ -182,9 +190,10 @@ def encode_wav_mp3(filename, destination, cover, tags):
 	# Prepares the ID3 tags to be passed as parameters of the 'lame' program
 	if tags:
 		for tag in TAGS:
-			if tag == "ALBUMARTIST":
+			if tag in ["ALBUMARTIST", "DISCTOTAL"]:
 				pair = TAGS[tag]
 				lame.extend([pair[0], pair[1] + tags[tag]])
+
 			elif tag != "TRACKTOTAL":
 				tracktotal = ("/" + tags["TRACKTOTAL"]) if tag == "TRACKNUMBER" else ""
 				lame.extend([TAGS[tag], tags[tag] + tracktotal])
@@ -246,12 +255,20 @@ def create_playlist(folder, artist, album):
 	output.close()
 
 
-def create_tag_file(filename, tags, destination):
+def create_tag_file(filename, destination):
 	"""
 	Creates an ID3 tag file (.txt extension) for the given audio file.
 	"""
+	# Prepares the 'metaflac' program arguments:
+	# --export-tags-to => Export tags to a file (use '-' for stdout)
+	metaflac = ["metaflac", "--export-tags-to=-", filename]
+	p = Popen(metaflac, stdout=PIPE)
+	tags = [(tag[0:tag.index('=')].upper() + tag[tag.index('='):]) for tag in p.communicate()[0].rstrip("\n").split("\n")]
+
+	# Writes the list of tags to the file
 	stream = open(join(destination, TAGS_FILE), 'a')
-	tags.insert(0, filename)
+	new_filename = splitext(join(destination, basename(filename)))[0] + EXTENSIONS["wav"]
+	tags.insert(0, new_filename)
 	stream.write('|'.join(tags) + '\n')
 	stream.close()
 
@@ -270,7 +287,6 @@ def read_tag_file(filename):
 			map_tags[flac] = value
 
 		result[list_tags[0]] = map_tags
-		#fulltags.update({tags[0]: map_tags})
 
 	stream.close()
 	return result
