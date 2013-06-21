@@ -1,7 +1,7 @@
 # FLAC Manager
 
-A set of simple Python programs that allow a user to manage the conversion
-between several types of audio files.
+A set of simple programs that allow a user to manage the conversion between
+several types of audio files.
 
 ## Programs
 
@@ -103,10 +103,12 @@ Future versions will have the following features:
 
 * A new master control program (nudge nudge, wink wink) that could be used
 instead of the individual programs. It will have two additional options for
-the desired input and output formats, while keep the set of options outlined
+the desired input and output formats, while keeping the set of options outlined
 for the current set of programs
 * An installation script that will avoid any manual configuration to make the
 programs globally available in a system (path, location, etc.)
+* A synchronization mechanism that can replicate the tree structure of the FLAC
+folder and automatically convert every album to MP3
 
 ## Dependencies
 

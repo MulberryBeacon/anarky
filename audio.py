@@ -9,22 +9,26 @@ License: MIT (see LICENSE for details)
 """
 
 # Module import section
-# -------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 from miscellaneous import is_string_empty
 from os.path import basename, join, splitext
 from subprocess import call, PIPE, Popen
 
 # Constants :: Lists and file extensions
-# -------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 PLAYLIST = "00. {0} - {1}.m3u"
 TAGS_FILE = "tags.txt"
 
 """
 TITLE       : Track/Work name
-ARTIST      : The artist generally considered responsible for the work. In popular music this is usually the performing band or singer. For classical music it would be the composer. For an audio book it would be the author of the original text
+ARTIST      : The artist generally considered responsible for the work. In popular music this is usually the performing
+			  band or singer. For classical music it would be the composer. For an audio book it would be the author of
+			  the original text
 ALBUM       : The collection name to which this track belongs
 TRACKNUMBER : The track number of this piece if part of a specific larger collection or album
-ALBUMARTIST : The artist(s) who performed the work. In classical music this would be the conductor, orchestra, soloists. In an audio book it would be the actor who did the reading. In popular music this is typically the same as the ARTIST and is omitted
+ALBUMARTIST : The artist(s) who performed the work. In classical music this would be the conductor, orchestra, soloists.
+			  In an audio book it would be the actor who did the reading. In popular music this is typically the same as
+			  the ARTIST and is omitted
 GENRE       : A short text indication of music genre
 DATE        : Date the track was recorded
 DISCTOTAL   : Number of discs that compose the set ("DISCTOTAL" : ["--tv", "TPOS="],)
@@ -48,7 +52,7 @@ EXTENSIONS = {
 }
 
 # Methods :: Album cover and ID3 tag management
-# -------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 def get_cover(filename, destination):
 	"""
 	Retrieves the cover file from a FLAC audio file.
@@ -119,7 +123,7 @@ def get_tags(filename, destination):
 
 
 # Methods :: File encoding and decoding
-# -------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 def decode_flac_wav(filename, destination, cover=False, tags=False):
 	"""
 	Decodes a FLAC audio file, generating the corresponding WAV audio file.
@@ -224,7 +228,7 @@ def encode_flac_mp3(filename, destination, cover="", tags={}):
 
 
 # Methods :: File management
-# -------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 def cleanup(filename):
 	"""
 	Removes the temporary WAV audio file created during the conversion process.
