@@ -10,15 +10,19 @@ License: MIT (see LICENSE for details)
 
 # Module import section
 # -------------------------------------------------------------------------------------------------
-from audio import decode_flac_wav
+from audio import EXTENSIONS, decode_flac_wav
 from interface import check_options
-import sys
+
+# Module import section
+# -------------------------------------------------------------------------------------------------
+PROGRAM = "flac2wav"
+DESCRIPTION = "Decodes FLAC files into the WAV format"
 
 # Methods :: Execution and boilerplate
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 	try:
-		(files, destination, cover, tags, playlist) = check_options(sys.argv, True)
+		(files, destination, cover, tags, playlist) = check_options(PROGRAM, DESCRIPTION, EXTENSIONS["flac"])
 		for item in files:
 			decode_flac_wav(item, destination, cover, tags)
 

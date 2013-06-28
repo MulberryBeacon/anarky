@@ -62,14 +62,14 @@ be stored in the given folder.
 
 ## Versions
 
-Version 0.1.0
+Version 0.0.4
 
 * Added three new options ("-c", "-p" and "-t") and updated the old options
 * Further generalization of commnand line related methods and migration to the
 interface library
 * Refinement of the audio library
 
-Version 0.0.5
+Version 0.0.3
 
 * First stable (and working) version
 * Generalized some of the commnand line related methods and migrated them to a
