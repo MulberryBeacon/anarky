@@ -27,7 +27,7 @@ ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 
 # Methods :: Command line options and instructions
 # ----------------------------------------------------------------------------------------------------------------------
--def check_options(program, description, extension):
+def check_options(program, description, extension):
 	"""
 	Checks the full set of command line arguments.
 	"""
@@ -66,10 +66,11 @@ ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 	# Checks the output directory, cover and tag files
 	if not directory_exists(args.output_dir)
 		or (not args.cover is None and not file_exists(args.cover))
-		or (not args.cover is None and not file_exists(args.cover)):
+		or (not args.tags is None and not file_exists(args.tags)):
 		sys.exit()
 
 	return files, args.output_dir, args.cover, args.tags, args.playlist
+
 
 # Methods :: Directory and file library
 # -------------------------------------------------------------------------------------------------
@@ -82,6 +83,7 @@ def file_exists(filename):
 		return False
 
 	return True
+
 
 def directory_exists(directory):
 	"""
