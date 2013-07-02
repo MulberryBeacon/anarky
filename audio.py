@@ -53,11 +53,104 @@ EXTENSIONS = {
 }
 
 
+# Methods :: File encoding and decoding
+# ----------------------------------------------------------------------------------------------------------------------
+def decode_flac_wav(filename, destination, cover=False, tags=False):
+	"""
+	Decodes a FLAC audio file, generating the corresponding WAV audio file.
+	Also retrieves the list of its ID3 tags and album cover.
+	"""
+	# Invokes the 'flac' program with the following arguments:
+	# -d => Decode (the default behavior is to encode)
+	# -f => Force overwriting of output files
+	# -o => Force the output file name
+	new_filename = update_file(filename, destination, EXTENSIONS["wav"])
+	call(["flac", "-df", filename, "-o", new_filename])
+
+	# Checks if both cover and tags should be retrieved
+	cover_filename = (get_cover(filename, destination) if cover else None)
+	tags_value = get_tags(filename, destination) if tags else None
+
+	return (new_filename, cover_filename, tags_value)
+
+
+def encode_wav_flac(filename, destination, cover, tags):
+	"""
+	Encodes a WAV audio file, generating the corresponding FLAC audio file.
+	"""
+	# Prepares the 'flac' program arguments:
+	# -f => Force overwriting of output files
+	# -8 => Synonymous with -l 12 -b 4096 -m -e -r 6
+	# -V => Verify a correct encoding
+	# -o => Force the output file name
+	new_filename = update_file(filename, destination, EXTENSIONS["flac"])
+	flac = ["flac", "-f8V", "-o", new_filename]
+
+	# Prepares the cover file to be passed as a parameter
+	# --picture=SPECIFICATION => Import picture and store in PICTURE block
+	if cover:
+		flac.extend(["--picture=", "3||" + basename(cover) + "||" + cover])
+
+	# Prepares the FLAC tags to be passed as parameters
+	# --T FIELD=VALUE => Add a FLAC tag; may appear multiple times
+	if tags:
+		for tag in TAGS:
+			flac.extend(["-T", tag + "=" + tags[tag]])
+
+	# Invokes the 'flac' program
+	call(flac.append(filename))
+
+	return new_filename
+
+
+def encode_wav_mp3(filename, destination, cover, tags):
+	"""
+	Encodes a WAV audio file, generating the corresponding MP3 audio file.
+	"""
+	# Prepares the 'lame' program arguments:
+	# -b 320          => Set the bitrate to 320 kbps
+	# -q 0            => Highest quality, very slow
+	# --preset insane => Type of the quality settings
+	# --id3v2-only    => Add only a version 2 tag
+	new_filename = update_file(filename, destination, EXTENSIONS["mp3"])
+	lame = ["lame", "-b", "320", "-q", "0", "--preset", "insane", "--id3v2-only"]
+
+	# Prepares the cover file to be passed as a parameter
+	# --ti <file> => Audio/song albumArt (jpeg/png/gif file, v2.3 tag)
+	if cover:
+		flac.extend(["--ti", cover])
+
+	# Prepares the ID3 tags to be passed as parameters
+	# --<tag> <value> => Audio/song specific information
+	if tags:
+		for flac_tag in TAGS:
+			id3_tag = TAGS[flac_tag]
+			if not id3_tag:
+				continue
+
+			value = tags[flac_tag]
+			lame.extend([id3_tag, value] if not id3_tag is list else [id3_tag[0], id3_tag[1] + value])
+
+	# Invokes the 'lame' program
+	call(lame.extend([filename, new_filename]))
+
+	return new_filename
+
+
+def encode_flac_mp3(filename, destination, cover, tags):
+	"""
+	Decodes a FLAC audio file, generating the corresponding WAV audio file.
+	The WAV audio file is then encoded, generating the corresponding MP3 audio file.
+	"""
+	new_filename = decode_flac_wav(filename, destination, cover, tags)
+	encode_wav_mp3(new_filename, destination, cover, tags)
+
+
 # Methods :: Album cover management
 # ----------------------------------------------------------------------------------------------------------------------
 def get_cover(filename, destination):
 	"""
-	Retrieves the cover file from a FLAC audio file.
+	Retrieves the front cover art file from a FLAC audio file and stores it in the destination directory.
 	"""
 	# Prepares the 'metaflac' program arguments:
 	# --list       => Lists the full stack of metadata
@@ -76,52 +169,23 @@ def get_cover(filename, destination):
 	p3 = Popen(sed, stdin=p2.stdout, stdout=PIPE)
 	cover = p3.communicate()[0].rstrip("\n")
 
-	# Checks if the audio file has a cover. If so, retrieves it
-	if not is_string_empty(cover):
+	# Checks if the audio file has a cover
+	if is_string_empty(cover):
+		return None
 
-		# Prepares the 'metaflac' program arguments:
-		# --export-picture-to => Export PICTURE block to a file
-		cover = join(destination, cover)
-		metaflac = ["metaflac", "--export-picture-to=" + cover, filename]
-		call(metaflac)
+	# Prepares the 'metaflac' program arguments:
+	# --export-picture-to => Export PICTURE block to a file
+	cover = join(destination, cover)
+	call(["metaflac", "--export-picture-to=" + cover, filename])
 
 	return cover
 
 
-def set_cover(filename, cover):
-	"""
-	Imports a cover file to a FLAC audio file.
-	"""
-	# Prepares the 'metaflac' program arguments:
-	# --import-picture-to => Import a picture and store it in a PICTURE block
-	specification = "||" + basename(cover) + "||" + cover
-	metaflac = ["metaflac", "--import-picture-from=" + specification, filename]
-	call(metaflac)
-
-
-# Methods :: ID3 tag management
+# Methods :: Tag management
 # ----------------------------------------------------------------------------------------------------------------------
-def create_tag_file(filename, destination):
-	"""
-	Creates an ID3 tag file (.txt extension) for the given audio file.
-	"""
-	# Prepares the 'metaflac' program arguments:
-	# --export-tags-to => Export tags to a file (use '-' for stdout)
-	metaflac = ["metaflac", "--export-tags-to=-", filename]
-	p = Popen(metaflac, stdout=PIPE)
-	tags = [(tag[0:tag.index('=')].upper() + tag[tag.index('='):]) for tag in p.communicate()[0].rstrip("\n").split("\n")]
-
-	# Writes the list of tags to the file
-	stream = open(join(destination, TAGS_FILE), 'a')
-	new_filename = splitext(join(destination, basename(filename)))[0] + EXTENSIONS["wav"]
-	tags.insert(0, new_filename)
-	stream.write('|'.join(tags) + '\n')
-	stream.close()
-
-
 def read_tag_file(filename):
 	"""
-	Reads the contents of an ID3 tag text file.
+	Reads the contents of a tag text file.
 	"""
 	stream = open(filename, 'r')
 	result = {}
@@ -140,83 +204,25 @@ def read_tag_file(filename):
 
 def get_tags(filename, destination):
 	"""
-	Retrieves and stores the ID3 tag values of a FLAC audio file.
+	Retrieves and stores the tag values of a FLAC audio file.
 	"""
-	tags = {}
+	map_tags = {}
+	list_tags = [filename]
 	for tag in TAGS:
 
-		# Prepares the 'metaflac' program arguments:
+		# Invokes the 'metaflac' program with the following arguments:
 		# --show-tag => Shows the value of the given tag
-		metaflac = ["metaflac", "--show-tag=" + tag, filename]
+		p = Popen(["metaflac", "--show-tag=" + tag, filename], stdout=PIPE)
+		value = p.communicate()[0].rstrip("\n")
+		list_tags.append(value)
+		map_tags[tag] = value.split("=")[1]
 
-		# Prepares the 'sed' program arguments (the regular expression removes the tag name)
-		sed = ["sed", "s/.*=//"]
+	# Writes the list of tags to the file
+	stream = open(join(destination, TAGS_FILE), 'a')
+	stream.write('|'.join(list_tags) + '\n')
+	stream.close()
 
-		# Invokes the 'metaflac' and 'sed' programs to retrieve the ID3 tag values
-		p1 = Popen(metaflac, stdout=PIPE)
-		p2 = Popen(sed, stdin=p1.stdout, stdout=PIPE)
-		tags[tag] = p2.communicate()[0].rstrip("\n")
-
-	# Creates a tag file
-	create_tag_file(filename, destination)
-
-	return tags
-
-
-# Methods :: File encoding and decoding
-# ----------------------------------------------------------------------------------------------------------------------
-def decode_flac_wav(filename, destination, cover, tags):
-	"""
-	Decodes a FLAC audio file, generating the corresponding WAV audio file.
-	Also retrieves the list of its ID3 tags and album cover.
-	"""
-	# Invokes the 'flac' program with the following arguments:
-	# -d => Decode (the default behavior is to encode)
-	# -f => Force overwriting of output files
-	# -o => Force the output file name
-	new_filename = update_file(filename, destination, EXTENSIONS["wav"])
-	call(["flac", "-df", filename, "-o", new_filename])
-
-	return new_filename
-
-
-def encode_wav_flac(filename, destination, cover, tags):
-	"""
-	Encodes a WAV audio file, generating the corresponding FLAC audio file.
-	"""
-	# Invokes the 'flac' program with the following arguments:
-	# -f => Force overwriting of output files
-	# -8 => Synonymous with -l 12 -b 4096 -m -e -r 6
-	# -V => Verify a correct encoding
-	# -o => Force the output file name
-	new_filename = update_file(filename, destination, EXTENSIONS["flac"])
-	call(["flac", "-f8V", filename, "-o", new_filename])
-
-	return new_filename
-
-
-def encode_wav_mp3(filename, destination, cover, tags):
-	"""
-	Encodes a WAV audio file, generating the corresponding MP3 audio file.
-	"""
-	# Invokes the 'lame' program with the following arguments:
-	# -b 320          => Set the bitrate to 320 kbps
-	# -q 0            => Highest quality, very slow
-	# --preset insane => Type of the quality settings
-	# --id3v2-only    => Add only a version 2 tag
-	new_filename = update_file(filename, destination, EXTENSIONS["mp3"])
-	call(["lame", "-b", "320", "-q", "0", "--preset", "insane", "--id3v2-only", filename, new_filename])
-
-	return new_filename
-
-
-def encode_flac_mp3(filename, destination, cover, tags):
-	"""
-	Decodes a FLAC audio file, generating the corresponding WAV audio file.
-	The WAV audio file is then encoded, generating the corresponding MP3 audio file.
-	"""
-	new_filename = decode_flac_wav(filename, destination, cover, tags)
-	encode_wav_mp3(new_filename, destination, cover, tags)
+	return maps_tags
 
 
 # Methods :: File management

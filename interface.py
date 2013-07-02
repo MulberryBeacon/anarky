@@ -64,8 +64,8 @@ def check_options(program, description, extension):
 		sys.exit()
 
 	# Checks the output directory, cover and tag files
-	if not directory_exists(args.output_dir)
-		or (not args.cover is None and not file_exists(args.cover))
+	if not directory_exists(args.output_dir) \
+		or (not args.cover is None and not file_exists(args.cover)) \
 		or (not args.tags is None and not file_exists(args.tags)):
 		sys.exit()
 
