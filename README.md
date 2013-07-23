@@ -62,6 +62,11 @@ be stored in the given folder.
 
 ## Versions
 
+Version 0.0.5
+
+* Command line interface is now managed with the `argparse` module
+* Simplified the entire audio library
+
 Version 0.0.4
 
 * Added three new options ("-c", "-p" and "-t") and updated the old options

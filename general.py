@@ -8,6 +8,8 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
+# Project information
+# ----------------------------------------------------------------------------------------------------------------------
 __author__ = 'Eduardo Ferreira'
 __version__ = '0.0.4'
 __license__ = 'MIT'

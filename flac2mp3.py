@@ -8,12 +8,12 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-# Module import section
+# Module import
 # -------------------------------------------------------------------------------------------------
-from audio import encode_flac_mp3
+from audio import EXTENSIONS, encode_flac_mp3
 from interface import check_options
 
-# Module import section
+# Constants
 # -------------------------------------------------------------------------------------------------
 PROGRAM = "flac2mp3"
 DESCRIPTION = "Encodes FLAC files into the MP3 format with the maximum compression level"
@@ -22,7 +22,7 @@ DESCRIPTION = "Encodes FLAC files into the MP3 format with the maximum compressi
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 	try:
-		(files, destination, cover, tags, playlist) = check_options(PROGRAM, DESCRIPTION, ".flac")
+		(files, destination, cover, tags, playlist) = check_options(PROGRAM, DESCRIPTION, EXTENSIONS["flac"])
 		for item in files:
 			encode_flac_mp3(item, destination, cover, (tags[item] if tags else tags))
 

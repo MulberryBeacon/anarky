@@ -8,7 +8,7 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-# Module import section
+# Module import
 # ----------------------------------------------------------------------------------------------------------------------
 from general import is_string_empty
 from os.path import basename, join, splitext

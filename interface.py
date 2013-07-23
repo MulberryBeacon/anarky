@@ -8,13 +8,14 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-# Module import section
+# Module import
 # ----------------------------------------------------------------------------------------------------------------------
 import general
 
 import argparse
 import os
 import sys
+
 
 # Constants :: Error messages
 # ----------------------------------------------------------------------------------------------------------------------
@@ -24,6 +25,7 @@ ERROR_INVALID_FILE = ("The '{0}' file either doesn't exist or you don't have the
 ERROR_INVALID_DIRECTORY = ("The '{0}' directory either doesn't exist or you don't have the necessary " +
 					"privileges to access it!")
 ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
+
 
 # Methods :: Command line options and instructions
 # ----------------------------------------------------------------------------------------------------------------------

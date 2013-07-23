@@ -8,12 +8,12 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-# Module import section
+# Module import
 # -------------------------------------------------------------------------------------------------
-from audio import encode_wav_flac
+from audio import EXTENSIONS, encode_wav_flac
 from interface import check_options
 
-# Module import section
+# Constants
 # -------------------------------------------------------------------------------------------------
 PROGRAM = "flac2wav"
 DESCRIPTION = "Decodes FLAC files into the WAV format"
@@ -22,7 +22,7 @@ DESCRIPTION = "Decodes FLAC files into the WAV format"
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 	try:
-		(files, destination, cover, tags, playlist) = check_options(PROGRAM, DESCRIPTION, ".wav")
+		(files, destination, cover, tags, playlist) = check_options(PROGRAM, DESCRIPTION, EXTENSIONS["wav"])
 		for item in files:
 			encode_wav_flac(item, destination, cover, (tags[item] if tags else tags))
 

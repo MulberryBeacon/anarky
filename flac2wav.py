@@ -8,12 +8,12 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-# Module import section
+# Module import
 # -------------------------------------------------------------------------------------------------
 from audio import EXTENSIONS, decode_flac_wav
 from interface import check_options
 
-# Module import section
+# Constants
 # -------------------------------------------------------------------------------------------------
 PROGRAM = "flac2wav"
 DESCRIPTION = "Decodes FLAC files into the WAV format"
