@@ -10,8 +10,9 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-from general import is_string_empty
-from os.path import basename, join, splitext
+from general import is_string_empty, file_strip_full, file_update_full
+
+from os.path import basename, join
 from subprocess import call, PIPE, Popen
 
 
@@ -64,11 +65,11 @@ def decode_flac_wav(filename, destination, cover=False, tags=False):
 	# -d => Decode (the default behavior is to encode)
 	# -f => Force overwriting of output files
 	# -o => Force the output file name
-	new_filename = update_file(filename, destination, EXTENSIONS["wav"])
+	new_filename = file_update_full(filename, destination, EXTENSIONS["wav"])
 	call(["flac", "-df", filename, "-o", new_filename])
 
 	# Checks if both cover and tags should be retrieved
-	cover_filename = (get_cover(filename, destination) if cover else None)
+	cover_filename = get_cover(filename, destination) if cover else None
 	tags_value = get_tags(filename, destination) if tags else None
 
 	return (new_filename, cover_filename, tags_value)
@@ -83,13 +84,13 @@ def encode_wav_flac(filename, destination, cover, tags):
 	# -8 => Synonymous with -l 12 -b 4096 -m -e -r 6
 	# -V => Verify a correct encoding
 	# -o => Force the output file name
-	new_filename = update_file(filename, destination, EXTENSIONS["flac"])
+	new_filename = file_update_full(filename, destination, EXTENSIONS["flac"])
 	flac = ["flac", "-f8V", "-o", new_filename]
 
 	# Prepares the cover file to be passed as a parameter
 	# --picture=SPECIFICATION => Import picture and store in PICTURE block
 	if cover:
-		flac.extend(["--picture=", "3||" + basename(cover) + "||" + cover])
+		flac.extend(["--picture=3||" + basename(cover) + "||" + cover])
 
 	# Prepares the FLAC tags to be passed as parameters
 	# --T FIELD=VALUE => Add a FLAC tag; may appear multiple times
@@ -98,7 +99,8 @@ def encode_wav_flac(filename, destination, cover, tags):
 			flac.extend(["-T", tag + "=" + tags[tag]])
 
 	# Invokes the 'flac' program
-	call(flac.append(filename))
+	flac.append(filename)
+	call(flac)
 
 	return new_filename
 
@@ -142,7 +144,7 @@ def encode_flac_mp3(filename, destination, cover, tags):
 	Decodes a FLAC audio file, generating the corresponding WAV audio file.
 	The WAV audio file is then encoded, generating the corresponding MP3 audio file.
 	"""
-	new_filename = decode_flac_wav(filename, destination, cover, tags)
+	(new_filename, cover_filename, tags_value) = decode_flac_wav(filename, destination, cover, tags)
 	encode_wav_mp3(new_filename, destination, cover, tags)
 
 
@@ -207,7 +209,7 @@ def get_tags(filename, destination):
 	Retrieves and stores the tag values of a FLAC audio file.
 	"""
 	map_tags = {}
-	list_tags = [filename]
+	list_tags = [file_strip_full(filename)]
 	for tag in TAGS:
 
 		# Invokes the 'metaflac' program with the following arguments:
@@ -227,16 +229,6 @@ def get_tags(filename, destination):
 
 # Methods :: File management
 # ----------------------------------------------------------------------------------------------------------------------
-def update_file(filename, directory, extension):
-	"""
-	Updates the path and extension of the given file.
-	"""
-	# Measure performance for possible solutions
-	#return splitext(join(directory, basename(filename)))[0] + extension
-	#return join(directory, basename(splitext(filename)[0] + extension))
-	return join(directory, splitext(basename(filename))[0] + extension)
-
-
 def cleanup(filename):
 	"""
 	Removes the temporary WAV audio file created during the conversion process.
@@ -247,7 +239,7 @@ def cleanup(filename):
 	rm = ["rm", "-rf"]
 
 	# Replaces the extension of the input file (from FLAC to WAV)
-	rm.append(splitext(filename)[0] + EXTENSIONS["wav"])
+	rm.append(file_update_ext(filename, EXTENSIONS["wav"]))
 
 	# Invokes the 'rm' program to remove the temporary WAV audio file
 	call(rm)

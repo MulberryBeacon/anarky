@@ -13,7 +13,6 @@ License: MIT (see LICENSE for details)
 import general
 
 import argparse
-import os
 import sys
 
 
@@ -62,7 +61,7 @@ def parse_options(program, description, extension, decode=False):
 	for name in args.input_files:
 
 		# Checks if the file exists
-		if not file_exists(name):
+		if not general.file_exists(name):
 			continue
 
 		# Checks if the file has the desired extension
@@ -78,9 +77,9 @@ def parse_options(program, description, extension, decode=False):
 		sys.exit()
 
 	# Checks the output directory, cover and tag files
-	if not directory_exists(args.output_dir) \
-		or (not decode and not args.cover is None and not file_exists(args.cover)) \
-		or (not decode and not args.tags is None and not file_exists(args.tags)):
+	if not general.directory_exists(args.output_dir) \
+		or (not decode and not args.cover is None and not general.file_exists(args.cover)) \
+		or (not decode and not args.tags is None and not general.file_exists(args.tags)):
 		sys.exit()
 
 	params = (files, args.output_dir, args.cover, args.tags)
@@ -88,27 +87,3 @@ def parse_options(program, description, extension, decode=False):
 		params += (args.playlist,)
 
 	return params
-
-
-# Methods :: Directory and file library
-# -------------------------------------------------------------------------------------------------
-def file_exists(filename):
-	"""
-	Checks if a file is a valid filesystem entry.
-	"""
-	if not os.path.isfile(filename):
-		print ERROR_INVALID_FILE.format(filename)
-		return False
-
-	return True
-
-
-def directory_exists(directory):
-	"""
-	Checks if a directory is a valid filesystem entry.
-	"""
-	if not os.path.isdir(directory):
-		print ERROR_INVALID_DIRECTORY.format(directory)
-		return False
-
-	return True

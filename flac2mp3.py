@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # -------------------------------------------------------------------------------------------------
-from audio import EXTENSIONS, encode_flac_mp3
+from audio import EXTENSIONS, encode_flac_mp3, read_tag_file, strip_file
 from interface import parse_options
 
 # Constants
