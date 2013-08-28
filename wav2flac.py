@@ -11,18 +11,18 @@ License: MIT (see LICENSE for details)
 # Module import
 # -------------------------------------------------------------------------------------------------
 from audio import EXTENSIONS, encode_wav_flac
-from interface import check_options
+from interface import parse_options
 
 # Constants
 # -------------------------------------------------------------------------------------------------
-PROGRAM = "flac2wav"
-DESCRIPTION = "Decodes FLAC files into the WAV format"
+PROGRAM = "wav2flac"
+DESCRIPTION = "Encodes WAV files into the FLAC format with the maximum compression level"
 
 # Methods :: Execution and boilerplate
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 	try:
-		(files, destination, cover, tags, playlist) = check_options(PROGRAM, DESCRIPTION, EXTENSIONS["wav"])
+		(files, destination, cover, tags, playlist) = parse_options(PROGRAM, DESCRIPTION, EXTENSIONS["wav"])
 		for item in files:
 			encode_wav_flac(item, destination, cover, (tags[item] if tags else tags))
 

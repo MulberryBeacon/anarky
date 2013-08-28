@@ -222,7 +222,7 @@ def get_tags(filename, destination):
 	stream.write('|'.join(list_tags) + '\n')
 	stream.close()
 
-	return maps_tags
+	return map_tags
 
 
 # Methods :: File management

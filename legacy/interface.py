@@ -29,32 +29,35 @@ ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 
 # Methods :: Command line options and instructions
 # ----------------------------------------------------------------------------------------------------------------------
-def parse_options(program, description, extension, decode=False):
+def check_options(program, description, extension):
 	"""
 	Checks the full set of command line arguments.
 	"""
-	# Defines the parent parser
-	parser = argparse.ArgumentParser(prog=program, description=description, version="%(prog)s " + general.__version__)
-	group = parser.add_argument_group("options")
+	parser = argparse.ArgumentParser(prog=program, description=description, add_help=False)
+	group = parser.add_argument_group("Options")
+	group.add_argument("-h", "--help", action="help", help="show this help message and exit")
+	group.add_argument("-v", "--version", action="version", version="%(prog)s " + general.__version__)
 	group.add_argument("-f", "--files", nargs="+", metavar="FILE", dest="input_files", help="set of files to convert", required=True)
 	group.add_argument("-d", "--dest", metavar="DEST", dest="output_dir", help="directory in which the generated files will be saved", required=True)
+	group.add_argument("-c", "--cover", metavar="IMG", dest="cover", help="add an image file with a cover")
+	group.add_argument("-t", "--tags", metavar="TAGS", dest="tags", help="add ID3 tags with the main information")
+	group.add_argument("-p", "--playlist", action="store_true", help="create a playlist file")
+	args = parser.parse_args()
 
-	# Defines the text for the common options in the following child parsers
-	cover_text = " an image file with a cover"
-	tags_text = " ID3 tags with the main information"
+"""
+>>> parent_parser = argparse.ArgumentParser(add_help=False)
+>>> parent_parser.add_argument('--parent', type=int)
 
-	# Defines the child parsers for decoding and encoding programs
-	decode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
-	decode_parser.add_argument("-c", "--cover", action="store_true", help="extract" + cover_text)
-	decode_parser.add_argument("-t", "--tags", action="store_true", help="extract" + tags_text)
+>>> foo_parser = argparse.ArgumentParser(parents=[parent_parser])
+>>> foo_parser.add_argument('foo')
+>>> foo_parser.parse_args(['--parent', '2', 'XXX'])
+Namespace(foo='XXX', parent=2)
 
-	encode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
-	encode_parser.add_argument("-c", "--cover", metavar="IMG", dest="cover", help="add" + cover_text)
-	encode_parser.add_argument("-t", "--tags", metavar="TAGS", dest="tags", help="add" + tags_text)
-	encode_parser.add_argument("-p", "--playlist", action="store_true", help="create a playlist file")
-
-	# Checks if the program performs a decoding or encoding operation
-	args = decode_parser.parse_args() if decode else encode_parser.parse_args()
+>>> bar_parser = argparse.ArgumentParser(parents=[parent_parser])
+>>> bar_parser.add_argument('--bar')
+>>> bar_parser.parse_args(['--bar', 'YYY'])
+Namespace(bar='YYY', parent=None)
+"""
 
 	files = []
 
@@ -79,15 +82,11 @@ def parse_options(program, description, extension, decode=False):
 
 	# Checks the output directory, cover and tag files
 	if not directory_exists(args.output_dir) \
-		or (not decode and not args.cover is None and not file_exists(args.cover)) \
-		or (not decode and not args.tags is None and not file_exists(args.tags)):
+		or (not args.cover is None and not file_exists(args.cover)) \
+		or (not args.tags is None and not file_exists(args.tags)):
 		sys.exit()
 
-	params = (files, args.output_dir, args.cover, args.tags)
-	if not decode:
-		params += (args.playlist,)
-
-	return params
+	return files, args.output_dir, args.cover, args.tags, args.playlist
 
 
 # Methods :: Directory and file library
