@@ -114,13 +114,13 @@ def encode_wav_mp3(filename, destination, cover, tags):
 	# -q 0            => Highest quality, very slow
 	# --preset insane => Type of the quality settings
 	# --id3v2-only    => Add only a version 2 tag
-	new_filename = update_file(filename, destination, EXTENSIONS["mp3"])
+	new_filename = file_update_full(filename, destination, EXTENSIONS["mp3"])
 	lame = ["lame", "-b", "320", "-q", "0", "--preset", "insane", "--id3v2-only"]
 
 	# Prepares the cover file to be passed as a parameter
 	# --ti <file> => Audio/song albumArt (jpeg/png/gif file, v2.3 tag)
 	if cover:
-		flac.extend(["--ti", cover])
+		lame.extend(["--ti", cover])
 
 	# Prepares the ID3 tags to be passed as parameters
 	# --<tag> <value> => Audio/song specific information
@@ -131,10 +131,15 @@ def encode_wav_mp3(filename, destination, cover, tags):
 				continue
 
 			value = tags[flac_tag]
-			lame.extend([id3_tag, value] if not id3_tag is list else [id3_tag[0], id3_tag[1] + value])
+			if flac_tag == "TRACKNUMBER":
+				value += "/" + tags["TRACKTOTAL"]
+
+			lame.extend([id3_tag, value] if not type(id3_tag) is list else [id3_tag[0], id3_tag[1] + value])
 
 	# Invokes the 'lame' program
-	call(lame.extend([filename, new_filename]))
+	lame.extend([filename, new_filename])
+	print lame
+	call(lame)
 
 	return new_filename
 
