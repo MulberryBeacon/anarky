@@ -55,6 +55,10 @@ A folder with a set of WAV files is selected and the resulting MP3 files will be
 
     wav2mp3 -d ~/songs/ -e ~/new_songs/
 
+## Versions
+
+See [CHANGELOG](CHANGELOG.md) for details.
+
 ## Bugs
 
 * `flac2mp3` doesn't remove the temporary WAV files extracted from the input FLAC files. The code for this is already implemented (albeit pending a review), but it needs to be invoked
@@ -77,7 +81,23 @@ Future versions will have the following features:
 
 * `lame`
 * `flac`
-* `metaflac`
+* `metaflac
+
+## Versioning
+
+This application will be maintained under the Semantic Versioning guidelines as much as possible.
+
+Releases will be numbered with the following format:
+
+`<major>.<minor>.<patch>`
+
+And constructed with the following guidelines:
+
+* Breaking backward compatibility bumps the major (and resets the minor and patch)
+* New additions without breaking backward compatibility bumps the minor (and resets the patch)
+* Bug fixes and misc changes bumps the patch
+
+For more information on SemVer, please visit [http://semver.org/](http://semver.org/).
 
 ## License
 
