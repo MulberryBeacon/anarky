@@ -15,45 +15,48 @@ Encodes FLAC files into the MP3 format with the maximum compression level.
 
 ## Instructions
 
-Each of the programs provides the same set of options:
+The `wav2flac` and `wav2mp3` programs provide the same set of options:
 
-    -f, --file
-        set of individual files to convert
-    -p, --playlist
-        create a playlist file
-    -v, --version
-        output version information and exit
-    -h, --help
-        display this help and exit
-    -d, --dir
-        directory with a set of files to convert
-    -e, --dest
-        directory in which the generated files will be saved
-    -c, --cover
-        add an image file with a cover
-    -t, --tags
-        add ID3 tags with the main information
+    optional arguments:
+      -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
+      -c IMG, --cover IMG   add an image file with a cover
+      -t TAGS, --tags TAGS  add ID3 tags with the main information
+      -p, --playlist        create a playlist file
 
-For `flac2wav`, the last two options will be used to extract information from files instead of adding it:
+    options:
+      -f FILE [FILE ...], --files FILE [FILE ...]
+                            set of files to convert
+      -d DEST, --dest DEST  directory in which the generated files will be saved
 
-    -c, --cover
-        extract an image file with a cover
-    -t, --tags
-        extrac ID3 tags with the main information
+The `flac2wav` program provides a marginally smaller set of options, since that creating a playlist file isn't necessary during a decoding operation. Also, the "-c" and "-t" options don't require a value because any cover art and ID3 tags should be retrieved from audio files instead of added to them:
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
+      -c, --cover           extract an image file with a cover
+      -t, --tags            extract ID3 tags with the main information
+
+    options:
+      -f FILE [FILE ...], --files FILE [FILE ...]
+                            set of files to convert
+      -d DEST, --dest DEST  directory in which the generated files will be saved
+
+The `flac2mp3` program is under review and it's currently *not working*.
 
 The current syntax requires that both the location of the input and output files be defined explicitly:
 
-    [program] [OPTION] [-fd] [input-files] [-e] [destination]
+    PROGRAM [-h] [-v] -f FILE [FILE ...] -d DEST [-c] [-t]
 
 ## Examples
 
 A specific WAV file is selected and the resulting FLAC file will be stored in the given folder.
 
-    wav2flac -f lovely_song.wav -e ~/new_songs/
+    wav2flac -f lovely_song.wav -d ~/new_songs/
 
-A folder with a set of WAV files is selected and the resulting MP3 files will be stored in the given folder.
+A specific FLAC file is selected and the resulting WAV file will be stored in the given folder, along with the extracted cover art and ID3 tags files.
 
-    wav2mp3 -d ~/songs/ -e ~/new_songs/
+    wav2flac -f lovely_song.wav -d ~/new_songs/ -c -t
 
 ## Versions
 
@@ -61,8 +64,7 @@ See [CHANGELOG](CHANGELOG.md) for details.
 
 ## Bugs
 
-* `flac2mp3` doesn't remove the temporary WAV files extracted from the input FLAC files. The code for this is already implemented (albeit pending a review), but it needs to be invoked
-* `flac2mp3` doesn't remove the temporary cover file extracted from the input FLAC files. Code still needs to be implement to perform this step
+* `flac2mp3` doesn't remove the temporary files that are extracted from the input FLAC files (WAV and cover art files). Code still needs to be implement to perform this step
 
 ## Roadmap
 

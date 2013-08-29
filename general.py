@@ -23,10 +23,8 @@ __license__ = 'MIT'
 # Constants :: Error messages
 # ----------------------------------------------------------------------------------------------------------------------
 ERROR_INTERRUPTED = "The program execution was interrupted!"
-ERROR_INVALID_FILE = ("The '{0}' file either doesn't exist or you don't have the necessary " +
-					"privileges to access it!")
-ERROR_INVALID_DIRECTORY = ("The '{0}' directory either doesn't exist or you don't have the necessary " +
-					"privileges to access it!")
+ERROR_INVALID_FILE = "The '{0}' file either doesn't exist or you don't have the necessary privileges to access it!"
+ERROR_INVALID_DIRECTORY = "The '{0}' directory either doesn't exist or you don't have the necessary privileges to access it!"
 ERROR_NO_FILES_GIVEN = "No {0} files were given!"
 ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 

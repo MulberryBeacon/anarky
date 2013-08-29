@@ -2,7 +2,7 @@ Version 0.1.4
 
 * Command line interface is now managed with the `argparse` module
 * Simplified the entire audio library
-* Dynamically retrieve the artist and album names for the playlist file name from the ID3 tags of an audio file. In case they are unavailable, the dummy strings "artist" and "album" are used, respectively
+* Dynamically retrieve the artist and album names from the ID3 tags of an audio file to generate a playlist file. In case they are unavailable, the dummy strings "artist" and "album" are used, respectively
 
 Version 0.1.3
 
