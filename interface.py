@@ -10,17 +10,10 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-import general
+from general import __version__, directory_exists, file_exists, ERROR_NO_FILES_GIVEN, ERROR_WRONG_FILE_TYPE
 
 import argparse
 import sys
-
-
-# Constants :: Error messages
-# ----------------------------------------------------------------------------------------------------------------------
-ERROR_INTERRUPTED = "The program execution was interrupted!"
-ERROR_NO_FILES_GIVEN = "No {0} files were given!"
-ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
 
 
 # Methods :: Command line options and instructions
@@ -30,7 +23,7 @@ def parse_options(program, description, extension, decode=False):
 	Checks the full set of command line arguments.
 	"""
 	# Defines the parent parser
-	parser = argparse.ArgumentParser(prog=program, description=description, version="%(prog)s " + general.__version__)
+	parser = argparse.ArgumentParser(prog=program, description=description, version="%(prog)s " + __version__)
 	group = parser.add_argument_group("options")
 	group.add_argument("-f", "--files", nargs="+", metavar="FILE", dest="input_files", help="set of files to convert", required=True)
 	group.add_argument("-d", "--dest", metavar="DEST", dest="output_dir", help="directory in which the generated files will be saved", required=True)
@@ -58,7 +51,7 @@ def parse_options(program, description, extension, decode=False):
 	for name in args.input_files:
 
 		# Checks if the file exists
-		if not general.file_exists(name):
+		if not file_exists(name):
 			continue
 
 		# Checks if the file has the desired extension
@@ -74,9 +67,9 @@ def parse_options(program, description, extension, decode=False):
 		sys.exit()
 
 	# Checks the output directory, cover and tag files
-	if not general.directory_exists(args.output_dir) \
-		or (not decode and not args.cover is None and not general.file_exists(args.cover)) \
-		or (not decode and not args.tags is None and not general.file_exists(args.tags)):
+	if not directory_exists(args.output_dir) \
+		or (not decode and not args.cover is None and not file_exists(args.cover)) \
+		or (not decode and not args.tags is None and not file_exists(args.tags)):
 		sys.exit()
 
 	params = (files, args.output_dir, args.cover, args.tags)

@@ -33,5 +33,5 @@ if __name__ == '__main__':
 			create_playlist(destination, map_tags, EXTENSIONS["flac"])
 
 	except KeyboardInterrupt:
-		from interface import ERROR_INTERRUPTED
+		from general import ERROR_INTERRUPTED
 		print "\n" + ERROR_INTERRUPTED + "\n"

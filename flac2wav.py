@@ -27,5 +27,5 @@ if __name__ == '__main__':
 			decode_flac_wav(item, destination, cover, tags)
 
 	except KeyboardInterrupt:
-		from interface import ERROR_INTERRUPTED
+		from general import ERROR_INTERRUPTED
 		print "\n" + ERROR_INTERRUPTED + "\n"

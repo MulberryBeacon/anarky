@@ -33,5 +33,5 @@ if __name__ == '__main__':
 			create_playlist(destination, "artist", "album")
 
 	except KeyboardInterrupt:
-		from interface import ERROR_INTERRUPTED
+		from general import ERROR_INTERRUPTED
 		print "\n" + ERROR_INTERRUPTED + "\n"
