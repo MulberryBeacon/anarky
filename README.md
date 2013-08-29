@@ -17,6 +17,8 @@ Encodes FLAC files into the MP3 format with the maximum compression level.
 
 The `wav2flac` and `wav2mp3` programs provide the same set of options:
 
+    usage: PROGRAM [-h] [-v] -f FILE [FILE ...] -d DEST [-c IMG] [-t TAGS] [-p]
+
     optional arguments:
       -h, --help            show this help message and exit
       -v, --version         show program's version number and exit
@@ -31,6 +33,8 @@ The `wav2flac` and `wav2mp3` programs provide the same set of options:
 
 The `flac2wav` program provides a marginally smaller set of options, since that creating a playlist file isn't necessary during a decoding operation. Also, the "-c" and "-t" options don't require a value because any cover art and ID3 tags should be retrieved from audio files instead of added to them:
 
+    usage: flac2wav [-h] [-v] -f FILE [FILE ...] -d DEST [-c] [-t]
+
     optional arguments:
       -h, --help            show this help message and exit
       -v, --version         show program's version number and exit
@@ -44,9 +48,7 @@ The `flac2wav` program provides a marginally smaller set of options, since that 
 
 The `flac2mp3` program is under review and it's currently *not working*.
 
-The current syntax requires that both the location of the input and output files be defined explicitly:
-
-    PROGRAM [-h] [-v] -f FILE [FILE ...] -d DEST [-c] [-t]
+The current syntax for the programs requires that both the location of the input and output files be defined explicitly.
 
 ## Examples
 
