@@ -62,26 +62,21 @@ See [CHANGELOG](CHANGELOG.md) for details.
 ## Bugs
 
 * `flac2mp3` doesn't remove the temporary WAV files extracted from the input FLAC files. The code for this is already implemented (albeit pending a review), but it needs to be invoked
-
 * `flac2mp3` doesn't remove the temporary cover file extracted from the input FLAC files. Code still needs to be implement to perform this step
-
-* Haven't found a way to dynamically define the artist and album names in the playlist file. For now, the strings "artist" and "album" are used, respectively
 
 ## Roadmap
 
 Future versions will have the following features:
 
 * A new master control program (nudge nudge, wink wink) that could be used instead of the individual programs. It will have two additional options for the desired input and output formats, while keeping the set of options outlined for the current set of programs
-
 * An installation script that will avoid any manual configuration to make the programs globally available in a system (path, location, etc.)
-
 * A synchronization mechanism that can replicate the tree structure of the FLAC folder and automatically convert every album to MP3
 
 ## Dependencies
 
 * `lame`
 * `flac`
-* `metaflac
+* `metaflac`
 
 ## Versioning
 

@@ -138,7 +138,6 @@ def encode_wav_mp3(filename, destination, cover, tags):
 
 	# Invokes the 'lame' program
 	lame.extend([filename, new_filename])
-	print lame
 	call(lame)
 
 	return new_filename

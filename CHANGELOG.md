@@ -1,27 +1,25 @@
-Version 0.0.5
+Version 0.1.4
 
 * Command line interface is now managed with the `argparse` module
 * Simplified the entire audio library
+* Dynamically retrieve the artist and album names for the playlist file name from the ID3 tags of an audio file. In case they are unavailable, the dummy strings "artist" and "album" are used, respectively
 
-Version 0.0.4
+Version 0.1.3
 
 * Added three new options ("-c", "-p" and "-t") and updated the old options
-* Further generalization of commnand line related methods and migration to the
-interface library
+* Further generalization of commnand line related methods and migration to the interface library
 * Refinement of the audio library
 
-Version 0.0.3
+Version 0.1.2
 
-* First stable (and working) version
-* Generalized some of the commnand line related methods and migrated them to a
-new interface library
+* Removed the "-F" option to supply a directory with input files. This means that the programs only accept lists of files as input for processing with the "-f" option
+* Generalized some of the command line related methods and migrated them to a new interface library
 
-Version 0.0.2
+Version 0.1.1
 
 * Added the "-h", "-v", "-d", "-f" and "-F" options
-* Refactored major portions of the code, mostly by replacing "hand made" code
-with Python built-in functions
+* Refactored major portions of the code, mostly by replacing "hand made" code with Python built-in functions
 
-Version 0.0.1
+Version 0.1.0
 
 * Initial version

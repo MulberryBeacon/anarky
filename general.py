@@ -16,7 +16,7 @@ from os.path import basename, isdir, isfile, join, splitext
 # Project information
 # ----------------------------------------------------------------------------------------------------------------------
 __author__ = 'Eduardo Ferreira'
-__version__ = '0.0.4'
+__version__ = '0.1.4'
 __license__ = 'MIT'
 
 
