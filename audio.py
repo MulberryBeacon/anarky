@@ -13,11 +13,14 @@ License: MIT (see LICENSE for details)
 from general import is_string_empty, file_strip_full, file_update_full
 
 from os.path import basename, join
+from random import choice
 from subprocess import call, PIPE, Popen
 
 
 # Constants :: Lists and file extensions
 # ----------------------------------------------------------------------------------------------------------------------
+DUMMY_ALBUM = "album"
+DUMMY_ARTIST = "artist"
 PLAYLIST = "00. {0} - {1}.m3u"
 TAGS_FILE = "tags.txt"
 
@@ -95,7 +98,7 @@ def encode_wav_flac(filename, destination, cover, tags):
 	# Prepares the FLAC tags to be passed as parameters
 	# --T FIELD=VALUE => Add a FLAC tag; may appear multiple times
 	if tags:
-		for tag in TAGS:
+		for tag in tags:
 			flac.extend(["-T", tag + "=" + tags[tag]])
 
 	# Invokes the 'flac' program
@@ -220,8 +223,9 @@ def get_tags(filename, destination):
 		# --show-tag => Shows the value of the given tag
 		p = Popen(["metaflac", "--show-tag=" + tag, filename], stdout=PIPE)
 		value = p.communicate()[0].rstrip("\n")
-		list_tags.append(value)
-		map_tags[tag] = value.split("=")[1]
+		if value:
+			list_tags.append(value)
+			map_tags[tag] = value.split("=")[1]
 
 	# Writes the list of tags to the file
 	stream = open(join(destination, TAGS_FILE), 'a')
@@ -249,15 +253,23 @@ def cleanup(filename):
 	call(rm)
 
 
-def create_playlist(folder, artist, album):
+def create_playlist(folder, tags, extension):
 	"""
 	Creates a playlist file (.m3u extension) for the given album.
 	"""
-	# Prepares the 'ls' program arguments
-	ls = ["ls", folder]
+	# Retrieves the album artist and name for the playlist file
+	song = choice(list(tags.keys()))
+	key_artist = "ALBUMARTIST" if "ALBUMARTIST" in tags[song] else "ARTIST"
+	album = DUMMY_ALBUM if not tags else tags[song]["ALBUM"]
+	artist = DUMMY_ARTIST if not tags else tags[song][key_artist]
+
+	# Retrieves the list of audio files to include in the playlist file
+	p = Popen("ls " + folder + "*" + extension, stdout=PIPE, shell=True)
+	files = p.communicate()[0].rstrip("\n").split("\n")
 
 	# Creates a new file with the specified name and writes the list of files
-	with open(join(folder, PLAYLIST.format(artist, album)), 'w') as output:
-		p = Popen(ls, stdout=output)
+	output = open(join(folder, PLAYLIST.format(artist, album)), 'w')
+	for item in files:
+		print>>output, basename(item)
 
 	output.close()

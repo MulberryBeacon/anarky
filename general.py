@@ -20,6 +20,14 @@ __version__ = '0.1.4'
 __license__ = 'MIT'
 
 
+# Constants :: Error messages
+# ----------------------------------------------------------------------------------------------------------------------
+ERROR_INVALID_FILE = ("The '{0}' file either doesn't exist or you don't have the necessary " +
+					"privileges to access it!")
+ERROR_INVALID_DIRECTORY = ("The '{0}' directory either doesn't exist or you don't have the necessary " +
+					"privileges to access it!")
+
+
 # Methods :: Text manipulation
 # ----------------------------------------------------------------------------------------------------------------------
 def is_string_empty(string):
