@@ -27,6 +27,9 @@ ERROR_INVALID_FILE = "The '{0}' file either doesn't exist or you don't have the 
 ERROR_INVALID_DIRECTORY = "The '{0}' directory either doesn't exist or you don't have the necessary privileges to access it!"
 ERROR_NO_FILES_GIVEN = "No {0} files were given!"
 ERROR_WRONG_FILE_TYPE = "The file {0} doesn't have the {1} extension!"
+#ERROR_NO_FILES = "No {0} files were found in the {1} directory!"
+#ERROR_NO_DIRECTORY_GIVEN = "No directory name was given!"
+#ERROR_ONLY_ONE_FILE = "Only one {0} file is allowed!"
 
 
 # Methods :: Text manipulation

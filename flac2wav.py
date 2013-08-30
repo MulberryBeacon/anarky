@@ -11,7 +11,7 @@ License: MIT (see LICENSE for details)
 # Module import
 # -------------------------------------------------------------------------------------------------
 from audio import EXTENSIONS, decode_flac_wav
-from interface import parse_options
+from interface import get_options
 
 # Constants
 # -------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ DESCRIPTION = "Decodes FLAC files into the WAV format"
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 	try:
-		(files, destination, cover, tags) = parse_options(PROGRAM, DESCRIPTION, EXTENSIONS["flac"], True)
+		(files, destination, cover, tags) = get_options(PROGRAM, DESCRIPTION, EXTENSIONS["flac"], True)
 		for item in files:
 			decode_flac_wav(item, destination, cover, tags)
 
