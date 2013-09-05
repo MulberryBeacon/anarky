@@ -152,7 +152,7 @@ def encode_flac_mp3(filename, destination, cover, tags):
 	The WAV audio file is then encoded, generating the corresponding MP3 audio file.
 	"""
 	(new_filename, cover_filename, tags_value) = decode_flac_wav(filename, destination, cover, tags)
-	encode_wav_mp3(new_filename, destination, cover, tags)
+	encode_wav_mp3(new_filename, destination, cover_filename if cover_filename else None, tags_value if tags_value else None)
 
 
 # Methods :: Album cover management

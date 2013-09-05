@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-from audio import EXTENSIONS
+from audio import EXTENSIONS, decode_flac_wav, encode_wav_mp3
 from os import listdir, makedirs
 from os.path import abspath, isdir, isfile, join
 
@@ -23,78 +23,119 @@ import sys
 
 # Methods :: 
 # ----------------------------------------------------------------------------------------------------------------------
-def get_subfolders(root, prefix=""):
+def get_subdirs(root, prefix=""):
 	"""
-	Recursively navigates through a folder and returns the list of subfolders.
+	Recursively navigates through a directory and returns the list of subdirectories.
 	"""
-	folders = []
+	dirs = []
 	for item in listdir(root):
 		item_path = join(root, item)
 		item_tree = join(prefix, item)
 		if isdir(item_path):
-			folders.append(item_tree)
-			folders.extend(get_subfolders(item_path, item_tree))
+			dirs.append(item_tree)
+			dirs.extend(get_subdirs(item_path, item_tree))
 
-	return folders
+	return dirs
 
-
-def folder_has_files(folder):
+"""
+def get_files(directory, extension):
 	"""
-	Checks if a folder contains, at least, one file.
+	Retrieves the list of files in a directory that have the given extension and adds their full path.
 	"""
-	for item in os.listdir(folder):
-		item_path = os.path.join(folder, item)
-		if isfile(item_path) and item_path.endswith(EXTENSIONS["flac"]):
-			return True
+	flac_list = [join(directory, item) for item in listdir(directory) if item.endswith(extension)]
+	return [flac_file for flac_file in flac_list if isfile(flac_file)]
+"""
 
-	return False
+def get_files(directory):
+	"""
+	Retrieves the list of files in a directory and adds their full path.
+	"""
+	entry_list = [join(directory, item) for item in listdir(directory)]
+	return [item for item in entry_list if isfile(item)]
 
+"""
+def get_source_files(source_directory):
+	# Checks if the source directory has any FLAC files to encode
+	list_flac = get_files(source_directory, EXTENSIONS["flac"])
+	if len(list_files) == 0:
+		print "[INFO] No FLAC files to process!"
 
-def does_stuff(folder_flac, folder_mp3):
+		# Checks if the source directory contains WAV files instead
+		list_wav = get_files(source_directory, EXTENSIONS["wav"])
+		if len(list_temp) == 0:
+			print "[INFO] No WAV files to process!" 
+			return None
+
+		return list_wav
+
+	return list_flac
+"""
+
+def does_stuff(dir_flac, dir_mp3):
 	"""
 	1) Check top level folders with artist names
 	2) If it exists, move to the subfolders and create any missing albums
 	3) If it doesn't exist, create the artist folder and the corresponding subfolders with albums
+
+	Possible cases:
+	1) folder without any FLAC files
+	2) folder without any WAV files
+	
+
+	2) folder with FLAC files => encode the list of files
+	3) folder has subfolders => indicates a multi CD album
 	"""
-	# Stores the full path of both FLAC and MP3 folders
-	root_flac = abspath(folder_flac)
-	root_mp3 = abspath(folder_mp3)
-	print root_flac
-	print root_mp3
+	# Stores the full path of both FLAC and MP3 directories
+	root_flac = abspath(dir_flac)
+	root_mp3 = abspath(dir_mp3)
 
-	# Retrieves the list of subfolders of both FLAC and MP3 folders
-	folders_flac = get_subfolders(root_flac)
-	folders_mp3 = get_subfolders(root_mp3)
-	print folders_flac, len(folders_flac)
-	print folders_mp3, len(folders_mp3)
+	# Retrieves the list of subdirectories of both FLAC and MP3 directories
+	subdirs_flac = get_subdirs(root_flac)
+	subdirs_mp3 = get_subdirs(root_mp3)
 
-	matches = [folder for folder in folders_flac if not folder in folders_mp3]
-	print matches, len(matches)
-	for match in matches:
+	# Goes through the list of missing directories
+	missing_dirs = [diff for diff in subdirs_flac if not diff in subdirs_mp3]
+	print subdirs_flac, len(subdirs_flac)
+	print subdirs_mp3, len(subdirs_mp3)
+	print missing_dirs, len(missing_dirs)
+	print '====================================================='
+	for missing_dir in missing_dirs:
 
-		# Creates a new folder
+		# Sets the full path for the source and destination directories
+		source_dir = join(root_flac, missing_dir)
+		destination_dir = join(root_mp3, missing_dir)
+
+		# Creates the new directory in the MP3 folder
 		try:
-			makedirs(join(root_mp3, match))
+			makedirs(destination_dir)
 		except OSError, e:
 			if e.errno != errno.EEXIST:
 				raise
 
-		# Checks if the folder has any FLAC files to encode
-		source_folder = join(root_flac, match)
-		if not folder_has_files(source_folder):
-			print "[ERROR] Fudge it!"
-			continue
+		# Checks if the source directory has any FLAC files to encode
+		list_files = get_files(source_dir, EXTENSIONS["flac"])
+		if len(list_files) == 0:
+			print "[INFO] No FLAC files to process!"
 
-		
+			# Checks if the source directory contains WAV files instead
+			list_temp = get_files(source_dir, EXTENSIONS["wav"])
+			if len(list_temp) == 0:
+				print "[INFO] No WAV files to process!" 
+				continue
 
-		# Possible cases:
-		# 1) folder without any FLAC files => [ERROR]
-		# 2) folder with FLAC files => encode the list of files
-		# 3) folder has subfolders => indicates a multi CD album
+			list_files = list_temp
 
-		# Checks if folder has any files to convert
-		#if folder_has_files(join(root_flac, match)):
-			
+		# Goes through the list of FLAC files
+		for item in list_files:
+			print flac
+			(wav_filename, cover_filename, tags_value) = decode_flac_wav(flac, source_dir, True, True)
+
+			# Checks any ID3 tags were retrieved
+			if not tags_value:
+				# apply yet to be implemented mechanism to retrieve the necessary information for ID3 tags from the file structure
+				print "[INFO] No tags!"
+
+			encode_wav_mp3(wav_filename, destination_dir, None, tags_value if tags_value else None)
 
 
 # Methods :: Execution and boilerplate
