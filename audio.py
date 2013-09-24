@@ -12,7 +12,7 @@ License: MIT (see LICENSE for details)
 # ----------------------------------------------------------------------------------------------------------------------
 from general import is_string_empty, file_strip_full, file_update_full
 
-from os.path import basename, join
+from os.path import basename, join, split
 from random import choice
 from subprocess import call, PIPE, Popen
 
@@ -36,7 +36,7 @@ ALBUMARTIST : The artist(s) who performed the work. In classical music this woul
 			  the ARTIST and is omitted
 GENRE       : A short text indication of music genre
 DATE        : Date the track was recorded
-DISCTOTAL   : Number of discs that compose the set ("DISCTOTAL" : ["--tv", "TPOS="],)
+DISCTOTAL   : Number of discs that compose the set
 TRACKTOTAL  : Number of tracks in the album
 """
 TAGS = {
@@ -47,6 +47,7 @@ TAGS = {
 	"ALBUMARTIST": ["--tv", "TPE2="],
 	"GENRE"      : "--tg",
 	"DATE"       : "--ty",
+	"DISCTOTAL"  : ["--tv", "TPOS="],
 	"TRACKTOTAL" : ""
 }
 
@@ -233,6 +234,14 @@ def get_tags(filename, destination):
 	stream.close()
 
 	return map_tags
+
+
+def generate_tags(filename):
+	"""
+	Generates the ID3 tags for an audio file based on its full path and name.
+	"""
+	tags = {}
+	(path, name) = split(filename)
 
 
 # Methods :: File management

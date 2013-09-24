@@ -31,7 +31,7 @@ The `wav2flac` and `wav2mp3` programs provide the same set of options:
                             set of files to convert
       -d DEST, --dest DEST  directory in which the generated files will be saved
 
-The `flac2wav` program provides a marginally smaller set of options, since that creating a playlist file isn't necessary during a decoding operation. Also, the "-c" and "-t" options don't require a value because any cover art and ID3 tags should be retrieved from audio files instead of added to them:
+The `flac2wav` program provides a marginally smaller set of options because creating a playlist file isn't necessary during a decoding operation. Also, the "-c" and "-t" options don't require a value because any cover art and ID3 tags should be retrieved from audio files instead of added to them:
 
     usage: flac2wav [-h] [-v] -f FILE [FILE ...] -d DEST [-c] [-t]
 
@@ -46,9 +46,9 @@ The `flac2wav` program provides a marginally smaller set of options, since that 
                             set of files to convert
       -d DEST, --dest DEST  directory in which the generated files will be saved
 
-The `flac2mp3` program is under review and it's currently *not working*.
+The `flac2mp3` program is currently under review and, for all purposes, is *not working*.
 
-The current syntax for the programs requires that both the location of the input and output files be defined explicitly.
+The current syntax for the programs requires that the location of both input and output files be defined explicitly.
 
 ## Examples
 
@@ -78,25 +78,11 @@ Future versions will have the following features:
 
 ## Dependencies
 
+All development and testing activities are carried out on Linux using Python 2.7.3. The following packages are required:
+
 * `lame`
 * `flac`
 * `metaflac`
-
-## Versioning
-
-This application will be maintained under the Semantic Versioning guidelines as much as possible.
-
-Releases will be numbered with the following format:
-
-`<major>.<minor>.<patch>`
-
-And constructed with the following guidelines:
-
-* Breaking backward compatibility bumps the major (and resets the minor and patch)
-* New additions without breaking backward compatibility bumps the minor (and resets the patch)
-* Bug fixes and misc changes bumps the patch
-
-For more information on SemVer, please visit [http://semver.org/](http://semver.org/).
 
 ## License
 

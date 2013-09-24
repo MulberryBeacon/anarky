@@ -39,9 +39,9 @@ def get_subdirs(root, prefix=""):
 
 """
 def get_files(directory, extension):
-	"""
+	
 	Retrieves the list of files in a directory that have the given extension and adds their full path.
-	"""
+	
 	flac_list = [join(directory, item) for item in listdir(directory) if item.endswith(extension)]
 	return [flac_file for flac_file in flac_list if isfile(flac_file)]
 """
@@ -53,34 +53,12 @@ def get_files(directory):
 	entry_list = [join(directory, item) for item in listdir(directory)]
 	return [item for item in entry_list if isfile(item)]
 
-"""
-def get_source_files(source_directory):
-	# Checks if the source directory has any FLAC files to encode
-	list_flac = get_files(source_directory, EXTENSIONS["flac"])
-	if len(list_files) == 0:
-		print "[INFO] No FLAC files to process!"
-
-		# Checks if the source directory contains WAV files instead
-		list_wav = get_files(source_directory, EXTENSIONS["wav"])
-		if len(list_temp) == 0:
-			print "[INFO] No WAV files to process!" 
-			return None
-
-		return list_wav
-
-	return list_flac
-"""
 
 def does_stuff(dir_flac, dir_mp3):
 	"""
 	1) Check top level folders with artist names
 	2) If it exists, move to the subfolders and create any missing albums
 	3) If it doesn't exist, create the artist folder and the corresponding subfolders with albums
-
-	Possible cases:
-	1) folder without any FLAC files
-	2) folder without any WAV files
-	
 
 	2) folder with FLAC files => encode the list of files
 	3) folder has subfolders => indicates a multi CD album
@@ -112,30 +90,37 @@ def does_stuff(dir_flac, dir_mp3):
 			if e.errno != errno.EEXIST:
 				raise
 
-		# Checks if the source directory has any FLAC files to encode
+		"""
+		# Case #1: check if the source directory has any FLAC files to encode
 		list_files = get_files(source_dir, EXTENSIONS["flac"])
 		if len(list_files) == 0:
 			print "[INFO] No FLAC files to process!"
 
-			# Checks if the source directory contains WAV files instead
-			list_temp = get_files(source_dir, EXTENSIONS["wav"])
-			if len(list_temp) == 0:
-				print "[INFO] No WAV files to process!" 
-				continue
-
-			list_files = list_temp
-
-		# Goes through the list of FLAC files
+		# Case #2: check if the source directory has any WAV files to encode
+		list_files = get_files(source_dir, EXTENSIONS["wav"])
+		if len(list_files) == 0:
+			print "[INFO] No WAV files to process!"
+		"""
+		list_files = get_files(source_dir)
 		for item in list_files:
-			print flac
-			(wav_filename, cover_filename, tags_value) = decode_flac_wav(flac, source_dir, True, True)
 
-			# Checks any ID3 tags were retrieved
-			if not tags_value:
-				# apply yet to be implemented mechanism to retrieve the necessary information for ID3 tags from the file structure
-				print "[INFO] No tags!"
+			# Case #1: check if the current entry is a FLAC file
+			if item.endswith(EXTENSIONS["flac"]):
+				(wav_filename, cover_filename, tags_value) = decode_flac_wav(flac, source_dir, True, True)
 
-			encode_wav_mp3(wav_filename, destination_dir, None, tags_value if tags_value else None)
+				# Checks any ID3 tags were retrieved
+				if not tags_value:
+					# apply yet to be implemented mechanism to retrieve the necessary information for ID3 tags from the file structure
+					print "[INFO] No tags!"
+
+				encode_wav_flac(item, destination_dir, None, tags_value)
+				encode_wav_mp3(wav_filename, destination_dir, None, tags_value)
+
+			# Case #2: check if the current entry is a WAV file
+			if item.endswith(EXTENSIONS["wav"]):
+				# tags_value = apply yet to be implemented mechanism to retrieve the necessary information for ID3 tags from the file structure
+				encode_wav_flac(item, destination_dir, None, tags_value)
+				encode_wav_mp3(item, destination_dir, None, tags_value)
 
 
 # Methods :: Execution and boilerplate
