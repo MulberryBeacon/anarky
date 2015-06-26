@@ -58,7 +58,7 @@ def file_update_ext(filename, extension=''):
     return splitext(filename)[0] + extension
 
 
-def file_update_full(filename, directory, extension):
+def update_path(filename, directory, extension):
     """
     Updates the path and extension of the given file.
     """

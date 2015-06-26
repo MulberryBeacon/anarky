@@ -10,12 +10,15 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-from general import is_string_empty, file_strip_full, file_update_full
+from general import is_string_empty, file_strip_full, update_path
 
 from enum import Enum
 from os.path import basename, join, split
 from random import choice
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
+
+#import locale
+import re
 
 
 # Constants :: Lists and file extensions
@@ -66,16 +69,17 @@ class AudioFile(Enum):
 def decode_flac_wav(filename, destination, cover=False, tags=False):
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
-    Also retrieves the list of its ID3 tags and album cover.
+    Also retrieves its ID3 tags and album cover.
     """
-
-    check_flac_file(filename)
+    if not is_flac_file(filename):
+        # TODO: check how this return integrates in the FLAC=>MP3 workflow
+        return None
 
     # Invokes the 'flac' program with the following arguments:
     # -d => Decode (the default behavior is to encode)
     # -f => Force overwriting of output files
     # -o => Force the output file name
-    new_filename = file_update_full(filename, destination, AudioFile.wav.value)
+    new_filename = update_path(filename, destination, AudioFile.wav.value)
     call(['flac', '-df', filename, '-o', new_filename])
 
     # Checks if both cover and tags should be retrieved
@@ -85,16 +89,20 @@ def decode_flac_wav(filename, destination, cover=False, tags=False):
     return (new_filename, cover_filename, tags_value)
 
 
-def encode_wav_flac(filename, destination, cover, tags):
+def encode_wav_flac(filename, destination, cover=None, tags=None):
     """
     Encodes a WAV audio file, generating the corresponding FLAC audio file.
     """
+    if not is_wav_file(filename):
+        # TODO: check how this return integrates in the FLAC=>MP3 workflow
+        return None
+
     # Prepares the 'flac' program arguments:
     # -f => Force overwriting of output files
     # -8 => Synonymous with -l 12 -b 4096 -m -e -r 6
     # -V => Verify a correct encoding
     # -o => Force the output file name
-    new_filename = file_update_full(filename, destination, AudioFile.flac.value)
+    new_filename = update_path(filename, destination, AudioFile.flac.value)
     flac = ['flac', '-f8V', '-o', new_filename]
 
     # Prepares the cover file to be passed as a parameter
@@ -124,7 +132,7 @@ def encode_wav_mp3(filename, destination, cover, tags):
     # -q 0            => Highest quality, very slow
     # --preset insane => Type of the quality settings
     # --id3v2-only    => Add only a version 2 tag
-    new_filename = file_update_full(filename, destination, AudioFile.mp3.value)
+    new_filename = update_path(filename, destination, AudioFile.mp3.value)
     lame = ['lame', '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only']
 
     # Prepares the cover file to be passed as a parameter
@@ -183,8 +191,10 @@ def get_cover(filename, destination):
     p1 = Popen(metaflac, stdout=PIPE)
     p2 = Popen(grep, stdin=p1.stdout, stdout=PIPE)
     p3 = Popen(sed, stdin=p2.stdout, stdout=PIPE)
-    cover = p3.communicate()[0].rstrip('\n')
-
+    cover = p3.stdout.read().decode("utf-8").rstrip('\n')
+    #encoding = locale.getdefaultlocale()[1].lower()
+    #cover = p3.stdout.read().decode(encoding).rstrip('\n')
+ 
     # Checks if the audio file has a cover
     if is_string_empty(cover):
         return None
@@ -229,7 +239,8 @@ def get_tags(filename, destination):
         # Invokes the 'metaflac' program with the following arguments:
         # --show-tag => Shows the value of the given tag
         p = Popen(['metaflac', '--show-tag=' + tag, filename], stdout=PIPE)
-        value = p.communicate()[0].rstrip('\n')
+        value = p.stdout.read().decode("utf-8").rstrip('\n')
+        
         if value:
             list_tags.append(value)
             map_tags[tag] = value.split('=')[1]
@@ -252,18 +263,36 @@ def generate_tags(filename):
 
 # Methods :: File management
 # ----------------------------------------------------------------------------------------------------------------------
-def check_flac_file(filename):
+def is_flac_file(filename):
     """
     Checks if the given file is a valid FLAC audio file.
     """
     # Prepares the 'metaflac' program arguments:
     # --show-md5sum => Show the MD5 signature from the STREAMINFO block
+    output = ''
     try:
-        output = check_output(['metaflac', '--show-md5sum', filename])
+        output = check_output(['metaflac', '--show-md5sum', filename]).decode("utf-8")
     except CalledProcessError as e:
-        print(e.returncode)
+        if e.returncode == 1:
+            return False
+
+    return re.match('[a-z0-9]+', output)
 
 
+def is_wav_file(filename):
+    """
+    Checks if the given file is a valid WAV audio file.
+    """
+    # Prepares the 'file' program arguments:
+    # --mime-type => Output the MIME type
+    output = ''
+    try:
+        output = check_output(['file', '--mime-type', filename]).decode("utf-8")
+    except CalledProcessError as e:
+        if e.returncode == 1:
+            return False
+
+    return output.contains('audio/x-wav')
 
 
 def cleanup(filename):

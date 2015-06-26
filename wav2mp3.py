@@ -23,10 +23,11 @@ DESCRIPTION = 'Encodes WAV files into the MP3 format with the maximum compressio
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     try:
-        (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION, AudioFile.wav)
-        map_tags = read_tag_file(tags) if tags else None
+        (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION, AudioFile.wav.value)
+        #map_tags = read_tag_file(tags) if tags else None
         for item in files:
-            encode_wav_mp3(item, destination, cover, (map_tags[file_strip_full(item)] if tags else None))
+            #encode_wav_mp3(item, destination, cover, (map_tags[file_strip_full(item)] if tags else None))
+            encode_wav_mp3(item, destination, cover)
 
         if playlist:
             from audio import create_playlist

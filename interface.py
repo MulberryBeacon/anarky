@@ -33,9 +33,9 @@ def get_options(program, description, extension, decode=False):
             continue
 
         # Checks if the file has the desired extension
-        if not name.endswith(extension):
-            print(ERROR_WRONG_FILE_TYPE.format(name, extension))
-            continue
+        #if not name.endswith(extension):
+        #    print(ERROR_WRONG_FILE_TYPE.format(name, extension))
+        #    continue
 
         files.append(name)
 
