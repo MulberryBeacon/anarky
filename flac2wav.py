@@ -22,7 +22,7 @@ DESCRIPTION = 'Decodes FLAC files into the WAV format'
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     try:
-        (files, destination, cover, tags) = get_options(PROGRAM, DESCRIPTION, AudioFile.flac.value, True)
+        (files, destination, cover, tags) = get_options(PROGRAM, DESCRIPTION, True)
         for item in files:
             decode_flac_wav(item, destination, cover, tags)
 

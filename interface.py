@@ -18,7 +18,7 @@ import sys
 
 # Methods :: Command line options and instructions
 # ----------------------------------------------------------------------------------------------------------------------
-def get_options(program, description, extension, decode=False):
+def get_options(program, description, decode=False):
     """
     Parses, retrieves and validates the values for the full set of command line arguments.
     """
@@ -27,21 +27,12 @@ def get_options(program, description, extension, decode=False):
 
     # Goes through the list of file names
     for name in args.input_files:
-
-        # Checks if the file exists
-        if not file_exists(name):
-            continue
-
-        # Checks if the file has the desired extension
-        #if not name.endswith(extension):
-        #    print(ERROR_WRONG_FILE_TYPE.format(name, extension))
-        #    continue
-
-        files.append(name)
+        if file_exists(name):
+            files.append(name)
 
     # Checks if one or more valid files were given
     if len(files) == 0:
-        print(ERROR_NO_FILES_GIVEN.format(extension))
+        print(ERROR_NO_FILES_GIVEN)
         sys.exit()
 
     # Checks the output directory, cover and tag files

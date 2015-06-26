@@ -24,7 +24,7 @@ DESCRIPTION = 'Encodes FLAC files into the MP3 format with the maximum compressi
 if __name__ == '__main__':
     try:
         """
-        (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION, EXTENSIONS["flac"])
+        (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION)
         #map_tags = read_tag_file(tags)
         for item in files:
             #encode_flac_mp3(item, destination, cover, (map_tags[file_strip_full(item)] if tags else None))
