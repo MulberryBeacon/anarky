@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # -------------------------------------------------------------------------------------------------
-from audio import AudioFile, decode_flac_wav
+from audio import decode_flac_wav
 from interface import get_options
 
 # Constants

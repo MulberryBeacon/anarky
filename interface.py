@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-from general import __version__, directory_exists, file_exists, ERROR_NO_FILES_GIVEN, ERROR_WRONG_FILE_TYPE
+from general import __version__, directory_exists, file_exists, ERROR_NO_FILES_GIVENß
 
 import argparse
 import sys

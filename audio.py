@@ -13,11 +13,11 @@ License: MIT (see LICENSE for details)
 from general import is_string_empty, file_strip_full, update_path
 
 from enum import Enum
+from json import dump
 from os.path import basename, join, split
 from random import choice
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
 
-#import locale
 import re
 
 
@@ -79,14 +79,14 @@ def decode_flac_wav(filename, destination, cover=False, tags=False):
     # -d => Decode (the default behavior is to encode)
     # -f => Force overwriting of output files
     # -o => Force the output file name
-    new_filename = update_path(filename, destination, AudioFile.wav.value)
-    call(['flac', '-df', filename, '-o', new_filename])
+    output_filename = update_path(filename, destination, AudioFile.wav.value)
+    call(['flac', '-df', filename, '-o', output_filename])
 
     # Checks if both cover and tags should be retrieved
     cover_filename = get_cover(filename, destination) if cover else None
     tags_value = get_tags(filename, destination) if tags else None
 
-    return (new_filename, cover_filename, tags_value)
+    return (output_filename, cover_filename, tags_value)
 
 
 def encode_wav_flac(filename, destination, cover=None, tags=None):
@@ -191,9 +191,7 @@ def get_cover(filename, destination):
     p1 = Popen(metaflac, stdout=PIPE)
     p2 = Popen(grep, stdin=p1.stdout, stdout=PIPE)
     p3 = Popen(sed, stdin=p2.stdout, stdout=PIPE)
-    cover = p3.stdout.read().decode("utf-8").rstrip('\n')
-    #encoding = locale.getdefaultlocale()[1].lower()
-    #cover = p3.stdout.read().decode(encoding).rstrip('\n')
+    cover = p3.stdout.read().decode('utf-8').rstrip('\n')
  
     # Checks if the audio file has a cover
     if is_string_empty(cover):
@@ -209,23 +207,41 @@ def get_cover(filename, destination):
 
 # Methods :: Tag management
 # ----------------------------------------------------------------------------------------------------------------------
+#def read_tag_file(filename):
+#    """
+#    Reads the contents of a tag text file.
+#    """
+#    stream = open(filename, 'r')
+#    result = {}
+#    for line in stream:
+#        list_tags = line.rstrip('\n').split('|')
+#        map_tags = {}
+#        for tag in list_tags[1:]:
+#            (flac, value) = tag.split('=')
+#            map_tags[flac] = value
+#
+#        result[list_tags[0]] = map_tags
+#
+#    stream.close()
+#    return result
+#
+#def generate_tags(filename):
+#    """
+#    Generates the ID3 tags for an audio file based on its full path and name.
+#    """
+#    tags = {}
+#    (path, name) = split(filename)
+
+
 def read_tag_file(filename):
     """
     Reads the contents of a tag text file.
     """
-    stream = open(filename, 'r')
-    result = {}
-    for line in stream:
-        list_tags = line.rstrip('\n').split('|')
-        map_tags = {}
-        for tag in list_tags[1:]:
-            (flac, value) = tag.split('=')
-            map_tags[flac] = value
+    map_tags = None
+    with open(filename, 'r') as tags_file:
+        map_tags = load(tags_file)
 
-        result[list_tags[0]] = map_tags
-
-    stream.close()
-    return result
+    return map_tags
 
 
 def get_tags(filename, destination):
@@ -233,32 +249,20 @@ def get_tags(filename, destination):
     Retrieves and stores the tag values of a FLAC audio file.
     """
     map_tags = {}
-    list_tags = [file_strip_full(filename)]
     for tag in TAGS:
 
         # Invokes the 'metaflac' program with the following arguments:
         # --show-tag => Shows the value of the given tag
         p = Popen(['metaflac', '--show-tag=' + tag, filename], stdout=PIPE)
-        value = p.stdout.read().decode("utf-8").rstrip('\n')
-        
+        value = p.stdout.read().decode('utf-8').rstrip('\n')
         if value:
-            list_tags.append(value)
             map_tags[tag] = value.split('=')[1]
 
     # Writes the list of tags to the file
-    stream = open(join(destination, TAGS_FILE), 'a')
-    stream.write('|'.join(list_tags) + '\n')
-    stream.close()
+    with open(join(destination, TAGS_FILE), 'a') as tags_file:
+        dump(map_tags, tags_file, indent=4)
 
     return map_tags
-
-
-def generate_tags(filename):
-    """
-    Generates the ID3 tags for an audio file based on its full path and name.
-    """
-    tags = {}
-    (path, name) = split(filename)
 
 
 # Methods :: File management
@@ -271,7 +275,7 @@ def is_flac_file(filename):
     # --show-md5sum => Show the MD5 signature from the STREAMINFO block
     output = ''
     try:
-        output = check_output(['metaflac', '--show-md5sum', filename]).decode("utf-8")
+        output = check_output(['metaflac', '--show-md5sum', filename]).decode('utf-8')
     except CalledProcessError as e:
         if e.returncode == 1:
             return False
@@ -287,7 +291,7 @@ def is_wav_file(filename):
     # --mime-type => Output the MIME type
     output = ''
     try:
-        output = check_output(['file', '--mime-type', filename]).decode("utf-8")
+        output = check_output(['file', '--mime-type', filename]).decode('utf-8')
     except CalledProcessError as e:
         if e.returncode == 1:
             return False
@@ -295,39 +299,39 @@ def is_wav_file(filename):
     return output.contains('audio/x-wav')
 
 
-def cleanup(filename):
-    """
-    Removes the temporary WAV audio file created during the conversion process.
-    """
-    # Prepares the 'rm' program arguments:
-    # -r => Remove directories and their contents recursively
-    # -f => Ignore nonexistent files, never prompt
-    rm = ['rm', '-rf']
+#def cleanup(filename):
+#    """
+#    Removes the temporary WAV audio file created during the conversion process.
+#    """
+#    # Prepares the 'rm' program arguments:
+#    # -r => Remove directories and their contents recursively
+#    # -f => Ignore nonexistent files, never prompt
+#    rm = ['rm', '-rf']
+#
+#    # Replaces the extension of the input file (from FLAC to WAV)
+#    rm.append(file_update_ext(filename, AudioFile.wav.value))
+#
+#    # Invokes the 'rm' program to remove the temporary WAV audio file
+#    call(rm)
 
-    # Replaces the extension of the input file (from FLAC to WAV)
-    rm.append(file_update_ext(filename, AudioFile.wav.value))
 
-    # Invokes the 'rm' program to remove the temporary WAV audio file
-    call(rm)
-
-
-def create_playlist(folder, tags, extension):
-    """
-    Creates a playlist file (.m3u extension) for the given album.
-    """
-    # Retrieves the album artist and name for the playlist file
-    song = choice(list(tags.keys()))
-    key_artist = 'ALBUMARTIST' if 'ALBUMARTIST' in tags[song] else 'ARTIST'
-    album = DUMMY_ALBUM if not tags else tags[song]['ALBUM']
-    artist = DUMMY_ARTIST if not tags else tags[song][key_artist]
-
-    # Retrieves the list of audio files to include in the playlist file
-    p = Popen('ls ' + folder + '*' + extension, stdout=PIPE, shell=True)
-    files = p.communicate()[0].rstrip('\n').split('\n')
-
-    # Creates a new file with the specified name and writes the list of files
-    output = open(join(folder, PLAYLIST.format(artist, album)), 'w')
-    for item in files:
-        print>>output, basename(item)
-
-    output.close()
+#def create_playlist(folder, tags, extension):
+#    """
+#    Creates a playlist file (.m3u extension) for the given album.
+#    """
+#    # Retrieves the album artist and name for the playlist file
+#    song = choice(list(tags.keys()))
+#    key_artist = 'ALBUMARTIST' if 'ALBUMARTIST' in tags[song] else 'ARTIST'
+#    album = DUMMY_ALBUM if not tags else tags[song]['ALBUM']
+#    artist = DUMMY_ARTIST if not tags else tags[song][key_artist]
+#
+#    # Retrieves the list of audio files to include in the playlist file
+#    p = Popen('ls ' + folder + '*' + extension, stdout=PIPE, shell=True)
+#    files = p.communicate()[0].rstrip('\n').split('\n')
+#
+#    # Creates a new file with the specified name and writes the list of files
+#    output = open(join(folder, PLAYLIST.format(artist, album)), 'w')
+#    for item in files:
+#        print>>output, basename(item)
+#
+#    output.close()
