@@ -24,10 +24,11 @@ DESCRIPTION = 'Encodes WAV files into the FLAC format with the maximum compressi
 if __name__ == '__main__':
     try:
         (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION)
-        #map_tags = read_tag_file(tags) if tags else None
-        for item in files:
+        map_tags = read_tag_file(tags) if tags else None
+        for index, item in enumerate(files):
             #encode_wav_flac(item, destination, cover, (map_tags[file_strip_full(item)] if tags else None))
-            encode_wav_flac(item, destination, cover)
+            #encode_wav_flac(item, destination, cover)
+            encode_wav_flac(item, destination, cover, map_tags[index])
 
         if playlist:
             from audio import create_playlist

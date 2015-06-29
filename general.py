@@ -23,8 +23,9 @@ __license__ = 'MIT'
 # Constants :: Error messages
 # ----------------------------------------------------------------------------------------------------------------------
 ERROR_INTERRUPTED = 'The program execution was interrupted!'
-ERROR_INVALID_FILE = 'The file \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
+#ERROR_INVALID_FILE = 'The file \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
 ERROR_INVALID_DIRECTORY = 'The directory \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
+ERROR_INVALID_ENTRY = 'The filesystem entry \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
 ERROR_NO_FILES_GIVEN = 'You didn\'t add any files!'
 ERROR_WRONG_FILE_TYPE = 'The file \'{0}\' is not a valid {1} file!'
 # ERROR_NO_FILES = "No {0} files were found in the {1} directory!"
@@ -70,17 +71,17 @@ def update_path(filename, directory, extension):
 
 # Methods :: Directory and file library
 # -------------------------------------------------------------------------------------------------
-def file_exists(filename):
-    """
-    Checks if a file is a valid filesystem entry.
-    """
-    if not isfile(filename):
-        print(ERROR_INVALID_FILE.format(filename))
-        return False
-
-    return True
-
-
+#def file_exists(filename):
+#    """
+#    Checks if a file is a valid filesystem entry.
+#    """
+#    if not isfile(filename):
+#        print(ERROR_INVALID_FILE.format(filename))
+#        return False
+#
+#    return True
+#
+#
 def directory_exists(directory):
     """
     Checks if a directory is a valid filesystem entry.

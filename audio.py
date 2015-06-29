@@ -26,7 +26,6 @@ import re
 DUMMY_ALBUM = 'album'
 DUMMY_ARTIST = 'artist'
 PLAYLIST = '00. {0} - {1}.m3u'
-TAGS_FILE = 'tags.txt'
 
 """
 TITLE       : Track/Work name
@@ -102,8 +101,8 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
     # -8 => Synonymous with -l 12 -b 4096 -m -e -r 6
     # -V => Verify a correct encoding
     # -o => Force the output file name
-    new_filename = update_path(filename, destination, AudioFile.flac.value)
-    flac = ['flac', '-f8V', '-o', new_filename]
+    output_filename = update_path(filename, destination, AudioFile.flac.value)
+    flac = ['flac', '-f8V', '-o', output_filename]
 
     # Prepares the cover file to be passed as a parameter
     # --picture=SPECIFICATION => Import picture and store in PICTURE block
@@ -113,14 +112,14 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
     # Prepares the FLAC tags to be passed as parameters
     # --T FIELD=VALUE => Add a FLAC tag; may appear multiple times
     if tags:
-        for tag in tags:
-            flac.extend(['-T', tag + '=' + tags[tag]])
+        for tag, value in tags.items():
+            flac.extend(['-T', tag + '=' + value])
 
     # Invokes the 'flac' program
     flac.append(filename)
     call(flac)
 
-    return new_filename
+    return output_filename
 
 
 def encode_wav_mp3(filename, destination, cover, tags):
@@ -259,7 +258,8 @@ def get_tags(filename, destination):
             map_tags[tag] = value.split('=')[1]
 
     # Writes the list of tags to the file
-    with open(join(destination, TAGS_FILE), 'a') as tags_file:
+    output_file = file_strip_full(filename) + '.json'
+    with open(join(destination, output_file), 'w') as tags_file:
         dump(map_tags, tags_file, indent=4)
 
     return map_tags
@@ -296,7 +296,7 @@ def is_wav_file(filename):
         if e.returncode == 1:
             return False
 
-    return output.contains('audio/x-wav')
+    return 'audio/x-wav' in output
 
 
 #def cleanup(filename):

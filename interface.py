@@ -10,10 +10,54 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-from general import __version__, directory_exists, file_exists, ERROR_NO_FILES_GIVENß
+from general import __version__, directory_exists, ERROR_NO_FILES_GIVEN # file_exists, 
+from os import listdir, walk
+from os.path import isdir, isfile, join
 
 import argparse
 import sys
+
+
+# Methods :: Directory and file library
+# -------------------------------------------------------------------------------------------------
+def file_exists(filename):
+    """
+    Checks if a file is a valid filesystem entry.
+    """
+    if not isfile(filename):
+        print(ERROR_INVALID_FILE.format(filename))
+        return False
+
+    return True
+
+
+def directory_exists(directory):
+    """
+    Checks if a directory is a valid filesystem entry.
+    """
+    if not isdir(directory):
+        print(ERROR_INVALID_DIRECTORY.format(directory))
+        return False
+
+    return True
+
+
+def check_input(input_files):
+    """
+    """
+    result = []
+    for entry in input_files:
+        if isfile(entry):
+            result.append(entry)
+        elif isdir(entry):
+            for root, directories, files in walk(entry):
+                for filename in files:
+                    filepath = join(root, filename)
+                    result.append(filepath)
+        else:
+            print(ERROR_INVALID_ENTRY.format(name))
+
+    return result
 
 
 # Methods :: Command line options and instructions
@@ -23,14 +67,9 @@ def get_options(program, description, decode=False):
     Parses, retrieves and validates the values for the full set of command line arguments.
     """
     args = parse_options(program, description, decode)
-    files = []
 
-    # Goes through the list of file names
-    for name in args.input_files:
-        if file_exists(name):
-            files.append(name)
-
-    # Checks if one or more valid files were given
+    # Checks the input files
+    files = check_input(args.input_files)
     if len(files) == 0:
         print(ERROR_NO_FILES_GIVEN)
         sys.exit()
