@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-from general import is_string_empty, file_strip_full, update_path
+from general import is_string_empty, update_extension, update_path
 
 from enum import Enum
 from json import dump
@@ -23,9 +23,8 @@ import re
 
 # Constants :: Lists and file extensions
 # ----------------------------------------------------------------------------------------------------------------------
-DUMMY_ALBUM = 'album'
-DUMMY_ARTIST = 'artist'
 PLAYLIST = '00. {0} - {1}.m3u'
+ENCODING = 'utf-8'
 
 """
 TITLE       : Track/Work name
@@ -65,7 +64,7 @@ class AudioFile(Enum):
 
 # Methods :: File encoding and decoding
 # ----------------------------------------------------------------------------------------------------------------------
-def decode_flac_wav(filename, destination, cover=False, tags=False):
+def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=False):
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
     Also retrieves its ID3 tags and album cover.
@@ -82,10 +81,10 @@ def decode_flac_wav(filename, destination, cover=False, tags=False):
     call(['flac', '-df', filename, '-o', output_filename])
 
     # Checks if both cover and tags should be retrieved
-    cover_filename = get_cover(filename, destination) if cover else None
-    tags_value = get_tags(filename, destination) if tags else None
+    cover = get_cover(filename, destination) if extract_cover else None
+    tags = get_tags(filename, destination) if extract_tags else None
 
-    return (output_filename, cover_filename, tags_value)
+    return (output_filename, cover, tags)
 
 
 def encode_wav_flac(filename, destination, cover=None, tags=None):
@@ -122,7 +121,7 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
     return output_filename
 
 
-def encode_wav_mp3(filename, destination, cover, tags):
+def encode_wav_mp3(filename, destination, cover=None, tags=None):
     """
     Encodes a WAV audio file, generating the corresponding MP3 audio file.
     """
@@ -142,16 +141,15 @@ def encode_wav_mp3(filename, destination, cover, tags):
     # Prepares the ID3 tags to be passed as parameters
     # --<tag> <value> => Audio/song specific information
     if tags:
-        for flac_tag in TAGS:
-            id3_tag = TAGS[flac_tag]
+        for tag, value in tags.items():
+            id3_tag = TAGS[tag]
             if not id3_tag:
                 continue
 
-            value = tags[flac_tag]
-            if flac_tag == 'TRACKNUMBER':
+            if tag == 'TRACKNUMBER':
                 value += '/' + tags['TRACKTOTAL']
 
-            lame.extend([id3_tag, value] if not type(id3_tag) is list else [id3_tag[0], id3_tag[1] + value])
+            lame.extend([id3_tag, value] if type(id3_tag) is not list else [id3_tag[0], id3_tag[1] + value])
 
     # Invokes the 'lame' program
     lame.extend([filename, new_filename])
@@ -160,13 +158,16 @@ def encode_wav_mp3(filename, destination, cover, tags):
     return new_filename
 
 
-def encode_flac_mp3(filename, destination, cover, tags):
+def encode_flac_mp3(filename, destination, get_cover=False, get_tags=False):
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
     The WAV audio file is then encoded, generating the corresponding MP3 audio file.
     """
-    (new_filename, cover_filename, tags_value) = decode_flac_wav(filename, destination, cover, tags)
-    encode_wav_mp3(new_filename, destination, cover_filename if cover_filename else None, tags_value if tags_value else None)
+    wav_file = decode_flac_wav(filename, destination, get_cover, get_tags)
+    if wav_file:
+        encode_wav_mp3(wav_file[0], destination, wav_file[1] if get_cover else None, wav_file[2] if get_tags else None)
+    # (output_filename, cover, tags) = decode_flac_wav(filename, destination, get_cover, get_tags)
+    # encode_wav_mp3(output_filename, destination, cover if get_cover else None, tags if get_tags else None)
 
 
 # Methods :: Album cover management
@@ -190,7 +191,7 @@ def get_cover(filename, destination):
     p1 = Popen(metaflac, stdout=PIPE)
     p2 = Popen(grep, stdin=p1.stdout, stdout=PIPE)
     p3 = Popen(sed, stdin=p2.stdout, stdout=PIPE)
-    cover = p3.stdout.read().decode('utf-8').rstrip('\n')
+    cover = p3.stdout.read().decode(ENCODING).rstrip('\n')
  
     # Checks if the audio file has a cover
     if is_string_empty(cover):
@@ -206,63 +207,49 @@ def get_cover(filename, destination):
 
 # Methods :: Tag management
 # ----------------------------------------------------------------------------------------------------------------------
-#def read_tag_file(filename):
-#    """
-#    Reads the contents of a tag text file.
-#    """
-#    stream = open(filename, 'r')
-#    result = {}
-#    for line in stream:
-#        list_tags = line.rstrip('\n').split('|')
-#        map_tags = {}
-#        for tag in list_tags[1:]:
-#            (flac, value) = tag.split('=')
-#            map_tags[flac] = value
-#
-#        result[list_tags[0]] = map_tags
-#
-#    stream.close()
-#    return result
-#
+def read_tags(filename):
+    """
+    Reads a JSON file with ID3 tags.
+    """
+    tags = None
+    with open(filename, 'r') as tags_file:
+        tags = load(tags_file)
+
+    return tags
+
+
+def write_tags(filename, tags):
+    """
+    Writes ID3 tags to a JSON file.
+    """
+    with open(update_extension(filename, 'json'), 'w') as tags_file:
+        dump(tags, tags_file, indent=4)
+
+
+def get_tags(filename, destination):
+    """
+    Retrieves the tag values of a FLAC audio file.
+    """
+    tags = {}
+    for tag in TAGS:
+
+        # Invokes the 'metaflac' program with the following arguments:
+        # --show-tag => Shows the value of the given tag
+        p = Popen(['metaflac', '--show-tag=' + tag, filename], stdout=PIPE)
+        value = p.stdout.read().decode(ENCODING).rstrip('\n')
+        if value:
+            tags[tag] = value.split('=')[1]
+
+    return tags
+
+
 #def generate_tags(filename):
 #    """
 #    Generates the ID3 tags for an audio file based on its full path and name.
 #    """
 #    tags = {}
 #    (path, name) = split(filename)
-
-
-def read_tag_file(filename):
-    """
-    Reads the contents of a tag text file.
-    """
-    map_tags = None
-    with open(filename, 'r') as tags_file:
-        map_tags = load(tags_file)
-
-    return map_tags
-
-
-def get_tags(filename, destination):
-    """
-    Retrieves and stores the tag values of a FLAC audio file.
-    """
-    map_tags = {}
-    for tag in TAGS:
-
-        # Invokes the 'metaflac' program with the following arguments:
-        # --show-tag => Shows the value of the given tag
-        p = Popen(['metaflac', '--show-tag=' + tag, filename], stdout=PIPE)
-        value = p.stdout.read().decode('utf-8').rstrip('\n')
-        if value:
-            map_tags[tag] = value.split('=')[1]
-
-    # Writes the list of tags to the file
-    output_file = file_strip_full(filename) + '.json'
-    with open(join(destination, output_file), 'w') as tags_file:
-        dump(map_tags, tags_file, indent=4)
-
-    return map_tags
+# 01. ACDC - Hells Bells.flac
 
 
 # Methods :: File management
@@ -275,7 +262,7 @@ def is_flac_file(filename):
     # --show-md5sum => Show the MD5 signature from the STREAMINFO block
     output = ''
     try:
-        output = check_output(['metaflac', '--show-md5sum', filename]).decode('utf-8')
+        output = check_output(['metaflac', '--show-md5sum', filename]).decode(ENCODING)
     except CalledProcessError as e:
         if e.returncode == 1:
             return False
@@ -291,7 +278,7 @@ def is_wav_file(filename):
     # --mime-type => Output the MIME type
     output = ''
     try:
-        output = check_output(['file', '--mime-type', filename]).decode('utf-8')
+        output = check_output(['file', '--mime-type', filename]).decode(ENCODING)
     except CalledProcessError as e:
         if e.returncode == 1:
             return False
@@ -315,23 +302,26 @@ def is_wav_file(filename):
 #    call(rm)
 
 
-#def create_playlist(folder, tags, extension):
-#    """
-#    Creates a playlist file (.m3u extension) for the given album.
-#    """
-#    # Retrieves the album artist and name for the playlist file
-#    song = choice(list(tags.keys()))
-#    key_artist = 'ALBUMARTIST' if 'ALBUMARTIST' in tags[song] else 'ARTIST'
-#    album = DUMMY_ALBUM if not tags else tags[song]['ALBUM']
-#    artist = DUMMY_ARTIST if not tags else tags[song][key_artist]
-#
-#    # Retrieves the list of audio files to include in the playlist file
-#    p = Popen('ls ' + folder + '*' + extension, stdout=PIPE, shell=True)
-#    files = p.communicate()[0].rstrip('\n').split('\n')
-#
-#    # Creates a new file with the specified name and writes the list of files
-#    output = open(join(folder, PLAYLIST.format(artist, album)), 'w')
-#    for item in files:
-#        print>>output, basename(item)
-#
-#    output.close()
+# def create_playlist(folder, tags, extension):
+#     """
+#     Creates a playlist file (.m3u extension) for the given album.
+#     """
+#     DUMMY_ALBUM = 'album'
+#     DUMMY_ARTIST = 'artist'
+# 
+#     # Retrieves the album artist and name for the playlist file
+#     song = choice(list(tags.keys()))
+#     key_artist = 'ALBUMARTIST' if 'ALBUMARTIST' in tags[song] else 'ARTIST'
+#     album = DUMMY_ALBUM if not tags else tags[song]['ALBUM']
+#     artist = DUMMY_ARTIST if not tags else tags[song][key_artist]
+#     
+#     # Retrieves the list of audio files to include in the playlist file
+#     p = Popen('ls ' + folder + '*' + extension, stdout=PIPE, shell=True)
+#     files = p.communicate()[0].rstrip('\n').split('\n')
+#     
+#     # Creates a new file with the specified name and writes the list of files
+#     output = open(join(folder, PLAYLIST.format(artist, album)), 'w')
+#     for item in files:
+#         print>>output, basename(item)
+#     
+#     output.close()

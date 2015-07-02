@@ -23,7 +23,7 @@ __license__ = 'MIT'
 # Constants :: Error messages
 # ----------------------------------------------------------------------------------------------------------------------
 ERROR_INTERRUPTED = 'The program execution was interrupted!'
-#ERROR_INVALID_FILE = 'The file \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
+ERROR_INVALID_FILE = 'The file \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
 ERROR_INVALID_DIRECTORY = 'The directory \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
 ERROR_INVALID_ENTRY = 'The filesystem entry \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
 ERROR_NO_FILES_GIVEN = 'You didn\'t add any files!'
@@ -51,7 +51,7 @@ def file_strip_full(filename):
     return splitext(basename(filename))[0]
 
 
-def file_update_ext(filename, extension=''):
+def update_extension(filename, extension=''):
     """
     Updates the extension of the given file.
     If an extension is not provided, the extension from the given file is stripped.
@@ -67,27 +67,3 @@ def update_path(filename, directory, extension):
     # return splitext(join(directory, basename(filename)))[0] + extension
     # return join(directory, basename(splitext(filename)[0] + extension))
     return join(directory, splitext(basename(filename))[0] + extension)
-
-
-# Methods :: Directory and file library
-# -------------------------------------------------------------------------------------------------
-#def file_exists(filename):
-#    """
-#    Checks if a file is a valid filesystem entry.
-#    """
-#    if not isfile(filename):
-#        print(ERROR_INVALID_FILE.format(filename))
-#        return False
-#
-#    return True
-#
-#
-def directory_exists(directory):
-    """
-    Checks if a directory is a valid filesystem entry.
-    """
-    if not isdir(directory):
-        print(ERROR_INVALID_DIRECTORY.format(directory))
-        return False
-
-    return True

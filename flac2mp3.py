@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # -------------------------------------------------------------------------------------------------
-from audio import encode_flac_mp3, read_tag_file
+from audio import encode_flac_mp3#, read_tag_file
 from general import file_strip_full
 from interface import get_options
 
@@ -24,15 +24,13 @@ DESCRIPTION = 'Encodes FLAC files into the MP3 format with the maximum compressi
 if __name__ == '__main__':
     try:
         (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION)
-        #map_tags = read_tag_file(tags)
         for item in files:
-            #encode_flac_mp3(item, destination, cover, (map_tags[file_strip_full(item)] if tags else None))
-            encode_flac_mp3(item, destination, cover)
+            encode_flac_mp3(item, destination, cover, tags)
 
-        if playlist:
-            from audio import create_playlist
-            create_playlist(destination, "artist", "album")
-#        print('Program unavailable!')
+        # if playlist:
+        #     from audio import create_playlist
+        #     create_playlist(destination, "artist", "album")
+
     except KeyboardInterrupt:
         from general import ERROR_INTERRUPTED
         print('\n', ERROR_INTERRUPTED, '\n')
