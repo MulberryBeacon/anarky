@@ -225,7 +225,7 @@ def write_tags(filename, tags):
     """
     Writes ID3 tags to a JSON file.
     """
-    with open(update_extension(filename, 'json'), 'w') as tags_file:
+    with open(update_extension(filename, '.json'), 'w') as tags_file:
         dump(tags, tags_file, indent=4)
 
 

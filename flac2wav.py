@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # -------------------------------------------------------------------------------------------------
-from audio import decode_flac_wav
+from audio import decode_flac_wav, write_tags
 from interface import get_options
 
 # Constants
@@ -22,9 +22,18 @@ DESCRIPTION = 'Decodes FLAC files into the WAV format'
 # -------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     try:
-        (files, destination, cover, tags) = get_options(PROGRAM, DESCRIPTION, True)
+        (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION, True)
+
+        output_files = []
         for item in files:
-            decode_flac_wav(item, destination, cover, tags)
+            output_file = decode_flac_wav(item, destination, cover, tags)
+            if output_file:
+                output_files.append(output_file[0])
+                write_tags(output_file[0], output_file[2])
+
+        if playlist:
+            from audio import create_playlist
+            create_playlist(output_files, destination)
 
     except KeyboardInterrupt:
         from general import ERROR_INTERRUPTED
