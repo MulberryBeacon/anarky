@@ -76,18 +76,18 @@ def parse_options(program, description, decode=False):
     group.add_argument('-p', '--playlist', action='store_true', help='create a playlist file')
 
     # Defines the text for the common options in the following child parsers
-    cover_text = ' an image file with a cover'
-    tags_text = ' ID3 tags with the main information'
+    cover_text = '\'{0}\' an image file with a cover'
+    tags_text = '\'{0}\' ID3 tags with the main information'
 
     # Defines the child parser for the FLAC=>WAV and FLAC=>WAV=>MP3 workflows
     decode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
-    decode_parser.add_argument('-c', '--cover', action='store_true', help='extract' + cover_text)
-    decode_parser.add_argument('-t', '--tags', action='store_true', help='extract' + tags_text)
+    decode_parser.add_argument('-c', '--cover', action='store_true', help=cover_text.format('extract'))
+    decode_parser.add_argument('-t', '--tags', action='store_true', help=tags_text.format('extract'))
 
     # Defines the child parser for the WAV=>FLAC and WAV=>MP3 workflows
     encode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
-    encode_parser.add_argument('-c', '--cover', metavar='IMG', dest='cover', help='add' + cover_text)
-    encode_parser.add_argument('-t', '--tags', metavar='TAGS', dest='tags', help='add' + tags_text)
+    encode_parser.add_argument('-c', '--cover', metavar='IMG', dest='cover', help=cover_text.format('add'))
+    encode_parser.add_argument('-t', '--tags', metavar='TAGS', dest='tags', help=tags_text.format('add'))
 
     # Checks if the program performs a decoding or encoding operation
     return decode_parser.parse_args() if decode else encode_parser.parse_args()
@@ -109,9 +109,6 @@ def get_options(program, description, decode=False):
     if not directory_exists(args.output_dir) \
         or (not decode and not args.cover is None and not file_exists(args.cover)) \
         or (not decode and not args.tags is None and not file_exists(args.tags)):
+        sys.exit()
 
-    params = (files, args.output_dir, args.cover, args.tags)
-    if not decode:
-        params += (args.playlist,)
-
-    return params
+    return (files, args.output_dir, args.cover, args.tags, args.playlist)

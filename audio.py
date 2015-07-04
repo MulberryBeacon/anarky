@@ -15,15 +15,12 @@ from general import is_string_empty, update_extension, update_path
 from enum import Enum
 from json import dump
 from os.path import basename, join, split
-from random import choice
+from re import match
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
-
-import re
 
 
 # Constants :: Lists and file extensions
 # ----------------------------------------------------------------------------------------------------------------------
-PLAYLIST = '00. {0} - {1}.m3u'
 ENCODING = 'utf-8'
 
 """
@@ -125,12 +122,16 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
     """
     Encodes a WAV audio file, generating the corresponding MP3 audio file.
     """
+    if not is_wav_file(filename):
+        # TODO: check how this return integrates in the FLAC=>MP3 workflow
+        return None
+
     # Prepares the 'lame' program arguments:
     # -b 320          => Set the bitrate to 320 kbps
     # -q 0            => Highest quality, very slow
     # --preset insane => Type of the quality settings
     # --id3v2-only    => Add only a version 2 tag
-    new_filename = update_path(filename, destination, AudioFile.mp3.value)
+    output_filename = update_path(filename, destination, AudioFile.mp3.value)
     lame = ['lame', '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only']
 
     # Prepares the cover file to be passed as a parameter
@@ -152,10 +153,10 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
             lame.extend([id3_tag, value] if type(id3_tag) is not list else [id3_tag[0], id3_tag[1] + value])
 
     # Invokes the 'lame' program
-    lame.extend([filename, new_filename])
+    lame.extend([filename, output_filename])
     call(lame)
 
-    return new_filename
+    return output_filename
 
 
 def encode_flac_mp3(filename, destination, get_cover=False, get_tags=False):
@@ -165,9 +166,11 @@ def encode_flac_mp3(filename, destination, get_cover=False, get_tags=False):
     """
     wav_file = decode_flac_wav(filename, destination, get_cover, get_tags)
     if wav_file:
-        encode_wav_mp3(wav_file[0], destination, wav_file[1] if get_cover else None, wav_file[2] if get_tags else None)
-    # (output_filename, cover, tags) = decode_flac_wav(filename, destination, get_cover, get_tags)
-    # encode_wav_mp3(output_filename, destination, cover if get_cover else None, tags if get_tags else None)
+        cover = wav_file[1] if get_cover else None
+        tags = wav_file[2] if get_tags else None
+        return encode_wav_mp3(wav_file[0], destination, cover, tags)
+
+    return None
 
 
 # Methods :: Album cover management
@@ -267,7 +270,7 @@ def is_flac_file(filename):
         if e.returncode == 1:
             return False
 
-    return re.match('[a-z0-9]+', output)
+    return match(r'[a-z0-9]+', output)
 
 
 def is_wav_file(filename):
@@ -286,6 +289,22 @@ def is_wav_file(filename):
     return 'audio/x-wav' in output
 
 
+def create_playlist(files, destination):
+    """
+    Creates a playlist file (.m3u extension) for the given album.
+    """
+    # Gets the album name and artist from the destination directory
+    directory = split(destination)[1]
+    groups = match(r'\(\d+\)\s([\s\w]+)\s-\s([\s\w]+)', directory)
+    (artist, album) = groups.group(1, 2)
+    output_file = join(destination, '00. {0} - {1}.m3u'.format(artist, album))
+
+    # Creates a new file with the specified name and writes the list of files
+    with open(output_file, 'w') as playlist_file:
+        for audio_file in files:
+            playlist_file.write(audiofile)
+
+
 #def cleanup(filename):
 #    """
 #    Removes the temporary WAV audio file created during the conversion process.
@@ -300,28 +319,3 @@ def is_wav_file(filename):
 #
 #    # Invokes the 'rm' program to remove the temporary WAV audio file
 #    call(rm)
-
-
-# def create_playlist(folder, tags, extension):
-#     """
-#     Creates a playlist file (.m3u extension) for the given album.
-#     """
-#     DUMMY_ALBUM = 'album'
-#     DUMMY_ARTIST = 'artist'
-# 
-#     # Retrieves the album artist and name for the playlist file
-#     song = choice(list(tags.keys()))
-#     key_artist = 'ALBUMARTIST' if 'ALBUMARTIST' in tags[song] else 'ARTIST'
-#     album = DUMMY_ALBUM if not tags else tags[song]['ALBUM']
-#     artist = DUMMY_ARTIST if not tags else tags[song][key_artist]
-#     
-#     # Retrieves the list of audio files to include in the playlist file
-#     p = Popen('ls ' + folder + '*' + extension, stdout=PIPE, shell=True)
-#     files = p.communicate()[0].rstrip('\n').split('\n')
-#     
-#     # Creates a new file with the specified name and writes the list of files
-#     output = open(join(folder, PLAYLIST.format(artist, album)), 'w')
-#     for item in files:
-#         print>>output, basename(item)
-#     
-#     output.close()
