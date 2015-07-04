@@ -28,9 +28,6 @@ ERROR_INVALID_DIRECTORY = 'The directory \'{0}\' either doesn\'t exist or you do
 ERROR_INVALID_ENTRY = 'The filesystem entry \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
 ERROR_NO_FILES_GIVEN = 'You didn\'t add any files!'
 ERROR_WRONG_FILE_TYPE = 'The file \'{0}\' is not a valid {1} file!'
-# ERROR_NO_FILES = "No {0} files were found in the {1} directory!"
-# ERROR_NO_DIRECTORY_GIVEN = "No directory name was given!"
-# ERROR_ONLY_ONE_FILE = "Only one {0} file is allowed!"
 
 
 # Methods :: Text manipulation

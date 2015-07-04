@@ -294,15 +294,14 @@ def create_playlist(files, destination):
     Creates a playlist file (.m3u extension) for the given album.
     """
     # Gets the album name and artist from the destination directory
-    directory = split(destination)[1]
-    groups = match(r'\(\d+\)\s([\s\w]+)\s-\s([\s\w]+)', directory)
-    (artist, album) = groups.group(1, 2)
-    output_file = join(destination, '00. {0} - {1}.m3u'.format(artist, album))
+    path = destination[:-1] if destination.endswith('/') else destination
+    groups = match(r'\(\d+\)\s([\s\w]+)\s-\s([\s\w]+)', split(path)[1])
+    output_file = join(destination, '00. {0} - {1}.m3u'.format(groups.group(1), groups.group(2)))
 
     # Creates a new file with the specified name and writes the list of files
     with open(output_file, 'w') as playlist_file:
         for audio_file in files:
-            playlist_file.write(audiofile)
+            playlist_file.write('%s\n' % basename(audio_file))
 
 
 #def cleanup(filename):
