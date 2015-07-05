@@ -33,10 +33,10 @@ the same set of options:
                             input files to convert
       -d DEST, --dest DEST  output directory for the generated files
 
-The `flac2wav` and `flac2mp3` programs perform a decoding operation (only half
-of the what `flac2mp3` does, of course) and have the same set of options, which
-is slightly different from the previous two programs due to not having to
-provide an album art file:
+The `flac2wav` and `flac2mp3` programs perform a decoding operation (the latter
+starts with decoding and then encodes, of course) and have the same set of
+options, which is slightly different from the previous two programs due to not
+having to provide an album art file:
 
     usage: PROGRAM [-h] [-v] [-p] [-t] [-c] -f FILES [FILES ...] -d DEST
 
