@@ -1,6 +1,7 @@
 # FLAC Manager
 
-A set of simple programs that allow a user to manage the conversion between several types of audio files.
+A set of simple programs for encoding and decoding operations between several
+types of audio files.
 
 ## Programs
 
@@ -17,48 +18,51 @@ Encodes FLAC files into the MP3 format with the maximum compression level.
 
 The `wav2flac` and `wav2mp3` programs provide the same set of options:
 
-    usage: PROGRAM [-h] [-v] -f FILE [FILE ...] -d DEST [-c IMG] [-t TAGS] [-p]
+    usage: PROGRAM [-h] [-v] [-p] [-t] [-c IMG] -f FILES [FILES ...] -d DEST
 
     optional arguments:
       -h, --help            show this help message and exit
       -v, --version         show program's version number and exit
-      -c IMG, --cover IMG   add an image file with a cover
-      -t TAGS, --tags TAGS  add ID3 tags with the main information
-      -p, --playlist        create a playlist file
+      -p, --playlist        create playlist file
+      -t, --tags            add ID3 tags
+      -c IMG, --cover IMG   add album art
 
     options:
-      -f FILE [FILE ...], --files FILE [FILE ...]
-                            set of files to convert
-      -d DEST, --dest DEST  directory in which the generated files will be saved
+      -f FILES [FILES ...], --files FILES [FILES ...]
+                            input files to convert
+      -d DEST, --dest DEST  output directory for the generated files
 
-The `flac2wav` program provides a marginally smaller set of options because creating a playlist file isn't necessary during a decoding operation. Also, the "-c" and "-t" options don't require a value because any cover art and ID3 tags should be retrieved from audio files instead of added to them:
+The `flac2wav` and `flac2mp3` programs provide the same set of options, which
+is slightly different from the previous two programs:
 
-    usage: flac2wav [-h] [-v] -f FILE [FILE ...] -d DEST [-c] [-t]
+    usage: flac2wav [-h] [-v] [-p] [-t] [-c] -f FILES [FILES ...] -d DEST
 
     optional arguments:
       -h, --help            show this help message and exit
       -v, --version         show program's version number and exit
-      -c, --cover           extract an image file with a cover
-      -t, --tags            extract ID3 tags with the main information
+      -p, --playlist        create playlist file
+      -t, --tags            extract ID3 tags
+      -c, --cover           extract album art
 
     options:
-      -f FILE [FILE ...], --files FILE [FILE ...]
-                            set of files to convert
-      -d DEST, --dest DEST  directory in which the generated files will be saved
+      -f FILES [FILES ...], --files FILES [FILES ...]
+                            input files to convert
+      -d DEST, --dest DEST  output directory for the generated files
 
-The `flac2mp3` program is currently under review and, for all purposes, is *not working*.
-
-The current syntax for the programs requires that the location of both input and output files be defined explicitly.
+The current syntax for the programs requires that the location of both input
+and output files be defined explicitly.
 
 ## Examples
 
-A specific WAV file is selected and the resulting FLAC file will be stored in the given folder.
+A specific WAV file is selected and the resulting FLAC file will be stored in
+the given folder.
 
     wav2flac -f lovely_song.wav -d ~/new_songs/
 
-A specific FLAC file is selected and the resulting WAV file will be stored in the given folder, along with the extracted cover art and ID3 tags files.
+A specific FLAC file is selected and the resulting WAV file will be stored in
+the given folder, along with the extracted cover art and ID3 tags file.
 
-    wav2flac -f lovely_song.wav -d ~/new_songs/ -c -t
+    flac2wav -f lovely_song.flac -d ~/new_songs/ -c -t
 
 ## Versions
 

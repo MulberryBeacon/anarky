@@ -69,26 +69,21 @@ def parse_options(program, description, decode=False):
     """
     # Defines the parent parser
     parser = argparse.ArgumentParser(prog=program, description=description)
-    group = parser.add_argument_group("options")
-    group.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-    group.add_argument('-f', '--files', nargs='+', metavar='FILES', dest='input_files', help='set of files to convert', required=True)
-    group.add_argument('-d', '--dest', metavar='DEST', dest='output_dir', help='directory in which the generated files will be saved', required=True)
-    group.add_argument('-p', '--playlist', action='store_true', help='create a playlist file')
-    group.add_argument('-t', '--tags', action='store_true', help='add/extract ID3 tags')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
+    parser.add_argument('-p', '--playlist', action='store_true', default='False', help='create playlist file')
+    tags_help = '%s ID3 tags' % ('extract' if decode else 'add')
+    parser.add_argument('-t', '--tags', action='store_true', default='False', help=tags_help)
+    cover_help = '{0} album art'
+    if decode:
+        parser.add_argument('-c', '--cover', action='store_true', help=cover_help.format('extract'))
+    else:
+        parser.add_argument('-c', '--cover', metavar='IMG', dest='cover', help=cover_help.format('add'))    
 
-    # Defines the text for the common option in the following child parsers
-    cover_text = '\'{0}\' an image file with a cover'
+    group = parser.add_argument_group('options')
+    group.add_argument('-f', '--files', nargs='+', metavar='FILES', dest='input_files', help='input files to convert', required=True)
+    group.add_argument('-d', '--dest', metavar='DEST', dest='output_dir', help='output directory for the generated files', required=True)
 
-    # Defines the child parser for the FLAC=>WAV and FLAC=>WAV=>MP3 workflows
-    decode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
-    decode_parser.add_argument('-c', '--cover', action='store_true', help=cover_text.format('extract'))
-
-    # Defines the child parser for the WAV=>FLAC and WAV=>MP3 workflows
-    encode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
-    encode_parser.add_argument('-c', '--cover', metavar='IMG', dest='cover', help=cover_text.format('add'))
-
-    # Checks if the program performs a decoding or encoding operation
-    return decode_parser.parse_args() if decode else encode_parser.parse_args()
+    return parser.parse_args()
 
 
 def get_options(program, description, decode=False):
