@@ -13,7 +13,7 @@ License: MIT (see LICENSE for details)
 from general import is_string_empty, update_extension, update_path
 
 from enum import Enum
-from json import dump
+from json import dump, load
 from os.path import basename, join, split
 from re import match
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
@@ -215,8 +215,12 @@ def read_tags(filename):
     Reads a JSON file with ID3 tags.
     """
     tags = None
-    with open(filename, 'r') as tags_file:
-        tags = load(tags_file)
+    try:
+        with open(update_extension(filename, '.json'), 'r') as tags_file:
+            tags = load(tags_file)
+
+    except FileNotFoundError as e:
+        return None
 
     return tags
 
@@ -244,15 +248,6 @@ def get_tags(filename, destination):
             tags[tag] = value.split('=')[1]
 
     return tags
-
-
-#def generate_tags(filename):
-#    """
-#    Generates the ID3 tags for an audio file based on its full path and name.
-#    """
-#    tags = {}
-#    (path, name) = split(filename)
-# 01. ACDC - Hells Bells.flac
 
 
 # Methods :: File management
@@ -302,19 +297,3 @@ def create_playlist(files, destination):
     with open(output_file, 'w') as playlist_file:
         for audio_file in files:
             playlist_file.write('%s\n' % basename(audio_file))
-
-
-#def cleanup(filename):
-#    """
-#    Removes the temporary WAV audio file created during the conversion process.
-#    """
-#    # Prepares the 'rm' program arguments:
-#    # -r => Remove directories and their contents recursively
-#    # -f => Ignore nonexistent files, never prompt
-#    rm = ['rm', '-rf']
-#
-#    # Replaces the extension of the input file (from FLAC to WAV)
-#    rm.append(file_update_ext(filename, AudioFile.wav.value))
-#
-#    # Invokes the 'rm' program to remove the temporary WAV audio file
-#    call(rm)

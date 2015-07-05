@@ -11,6 +11,7 @@ License: MIT (see LICENSE for details)
 # Module import
 # -------------------------------------------------------------------------------------------------
 from audio import decode_flac_wav, write_tags
+from general import keyboard_interrupt
 from interface import get_options
 
 # Constants
@@ -36,5 +37,4 @@ if __name__ == '__main__':
             create_playlist(output_files, destination)
 
     except KeyboardInterrupt:
-        from general import ERROR_INTERRUPTED
-        print('\n', ERROR_INTERRUPTED, '\n')
+        keyboard_interrupt()

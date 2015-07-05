@@ -71,23 +71,21 @@ def parse_options(program, description, decode=False):
     parser = argparse.ArgumentParser(prog=program, description=description)
     group = parser.add_argument_group("options")
     group.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-    group.add_argument('-f', '--files', nargs='+', metavar='FILE', dest='input_files', help='set of files to convert', required=True)
+    group.add_argument('-f', '--files', nargs='+', metavar='FILES', dest='input_files', help='set of files to convert', required=True)
     group.add_argument('-d', '--dest', metavar='DEST', dest='output_dir', help='directory in which the generated files will be saved', required=True)
     group.add_argument('-p', '--playlist', action='store_true', help='create a playlist file')
+    group.add_argument('-t', '--tags', action='store_true', help='add/extract ID3 tags')
 
-    # Defines the text for the common options in the following child parsers
+    # Defines the text for the common option in the following child parsers
     cover_text = '\'{0}\' an image file with a cover'
-    tags_text = '\'{0}\' ID3 tags with the main information'
 
     # Defines the child parser for the FLAC=>WAV and FLAC=>WAV=>MP3 workflows
     decode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
     decode_parser.add_argument('-c', '--cover', action='store_true', help=cover_text.format('extract'))
-    decode_parser.add_argument('-t', '--tags', action='store_true', help=tags_text.format('extract'))
 
     # Defines the child parser for the WAV=>FLAC and WAV=>MP3 workflows
     encode_parser = argparse.ArgumentParser(parents=[parser], add_help=False)
     encode_parser.add_argument('-c', '--cover', metavar='IMG', dest='cover', help=cover_text.format('add'))
-    encode_parser.add_argument('-t', '--tags', metavar='TAGS', dest='tags', help=tags_text.format('add'))
 
     # Checks if the program performs a decoding or encoding operation
     return decode_parser.parse_args() if decode else encode_parser.parse_args()
@@ -107,8 +105,7 @@ def get_options(program, description, decode=False):
 
     # Checks the output directory, cover and tag parameters 
     if not directory_exists(args.output_dir) \
-        or (not decode and not args.cover is None and not file_exists(args.cover)) \
-        or (not decode and not args.tags is None and not file_exists(args.tags)):
+        or (not decode and not args.cover is None and not file_exists(args.cover)):
         sys.exit()
 
     return (files, args.output_dir, args.cover, args.tags, args.playlist)

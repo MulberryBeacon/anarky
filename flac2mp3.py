@@ -11,6 +11,7 @@ License: MIT (see LICENSE for details)
 # Module import
 # -------------------------------------------------------------------------------------------------
 from audio import encode_flac_mp3
+from general import keyboard_interrupt
 from interface import get_options
 
 # Constants
@@ -23,7 +24,7 @@ DESCRIPTION = 'Encodes FLAC files into the MP3 format with the maximum compressi
 if __name__ == '__main__':
     try:
         (files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION, True)
-        
+
         output_files = []
         for item in files:
             output_file = encode_flac_mp3(item, destination, cover, tags)
@@ -35,5 +36,4 @@ if __name__ == '__main__':
             create_playlist(output_files, destination)
 
     except KeyboardInterrupt:
-        from general import ERROR_INTERRUPTED
-        print('\n', ERROR_INTERRUPTED, '\n')
+        keyboard_interrupt()
