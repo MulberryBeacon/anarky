@@ -78,14 +78,64 @@ Future versions will have the following features:
 
 ## Dependencies
 
-All development and testing activities are carried out on Linux using Python 2.7.3. The following packages are required:
+All development and testing activities are carried out on Linux using Python 3.4.3. The following packages are required:
 
 * `lame`
 * `flac`
 * `metaflac`
 
+## Code metrics
+
+* CLOC
+
+```sh
+http://cloc.sourceforge.net v 1.62  T=0.10 s (71.5 files/s, 6550.5 lines/s)
+-------------------------------------------------------------------------------
+File                             blank        comment           code
+-------------------------------------------------------------------------------
+./audio.py                          60            116            123
+./interface.py                      24             35             52
+./wav2mp3.py                         9             13             21
+./wav2flac.py                        9             13             21
+./flac2wav.py                        8             13             19
+./general.py                        15             32             19
+./flac2mp3.py                        8             13             18
+-------------------------------------------------------------------------------
+SUM:                               133            235            273
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Python                           7            133            235            273
+-------------------------------------------------------------------------------
+SUM:                             7            133            235            273
+-------------------------------------------------------------------------------
+```
+
+* SLOCCount
+
+```sh
+SLOC	Directory	SLOC-by-Language (Sorted)
+273     top_dir     python=273
+
+Totals grouped by language (dominant language first):
+python:         273 (100.00%)
+
+Total Physical Source Lines of Code (SLOC)                = 273
+Development Effort Estimate, Person-Years (Person-Months) = 0.05 (0.61)
+ (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+Schedule Estimate, Years (Months)                         = 0.17 (2.08)
+ (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+Estimated Average Number of Developers (Effort/Schedule)  = 0.30
+Total Estimated Cost to Develop                           = $ 2,648
+ (average salary = $86,261/year, overhead = 0.60).
+ 
+Generated using David A. Wheeler's 'SLOCCount'.
+```
+
 ## License
 
-Copyright © 2012-2013 Eduardo Ferreira
+Copyright © 2012-2015 Eduardo Ferreira
 
 The code in this repository is MIT licensed, and therefore free to use as you please for commercial or non-commercial purposes (see [LICENSE](LICENSE) for details).
