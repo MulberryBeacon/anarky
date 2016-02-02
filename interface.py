@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python
 # -*- coding: utf8 -*-
 
 """
@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
-from general import __version__, ERROR_INVALID_FILE, ERROR_INVALID_DIRECTORY, ERROR_NO_FILES_GIVEN
+from general import __version__, ERROR_INVALID_ENTRY, ERROR_INVALID_FILE, ERROR_INVALID_DIRECTORY, ERROR_NO_FILES_GIVEN
 from os import listdir, walk
 from os.path import isdir, isfile, join
 
@@ -18,7 +18,7 @@ import argparse
 import sys
 
 
-# Methods :: Directory and file library
+# Methods :: File system library
 # ----------------------------------------------------------------------------------------------------------------------
 def file_exists(filename):
     """
@@ -53,8 +53,8 @@ def get_input_files(input_files):
         elif isdir(entry):
             for root, directories, files in walk(entry):
                 for filename in files:
-                    filepath = join(root, filename)
-                    result.append(filepath)
+                    file_path = join(root, filename)
+                    result.append(file_path)
         else:
             print(ERROR_INVALID_ENTRY.format(name))
 

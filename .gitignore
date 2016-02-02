@@ -42,3 +42,9 @@ nosetests.xml
 
 #Mr Developer
 .mr.developer.cfg
+
+# PyCharm files
+.idea/
+
+# Virtualenv directory
+flacmanager/
