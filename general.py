@@ -13,20 +13,9 @@ License: MIT (see LICENSE for details)
 from os.path import basename, join, splitext
 
 
-# Project information
-# ----------------------------------------------------------------------------------------------------------------------
-__author__ = 'Eduardo Ferreira'
-__version__ = '0.1.4'
-__license__ = 'MIT'
-
-
 # Constants :: Error messages
 # ----------------------------------------------------------------------------------------------------------------------
 ERROR_INTERRUPTED = 'The program execution was interrupted!'
-ERROR_INVALID_FILE = 'The file \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
-ERROR_INVALID_DIRECTORY = 'The directory \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
-ERROR_INVALID_ENTRY = 'The filesystem entry \'{0}\' either doesn\'t exist or you don\'t have the necessary privileges to access it!'
-ERROR_NO_FILES_GIVEN = 'You didn\'t add any files!'
 ERROR_WRONG_FILE_TYPE = 'The file \'{0}\' is not a valid {1} file!'
 WARNING_NO_JSON_FILE = 'No JSON file with ID3 tags was found. Proceeding with encoding operation without tags.'
 
