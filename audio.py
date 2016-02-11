@@ -19,6 +19,12 @@ from re import match
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
 
 
+# Constants :: Error messages
+# ----------------------------------------------------------------------------------------------------------------------
+ERROR_WRONG_FILE_TYPE = 'The file \'{0}\' is not a valid {1} file!'
+WARNING_NO_JSON_FILE = 'No JSON file with ID3 tags was found. Proceeding with encoding operation without tags.'
+
+
 # Constants :: Lists and file extensions
 # ----------------------------------------------------------------------------------------------------------------------
 ENCODING = 'utf-8'

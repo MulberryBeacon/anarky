@@ -26,7 +26,7 @@ ERROR = '{0} \'{1}\' is not available (doesn\'t exist or no privileges to access
 # Project information
 # ----------------------------------------------------------------------------------------------------------------------
 __author__ = 'Eduardo Ferreira'
-__version__ = '0.1.4'
+__version__ = '0.0.1'
 __license__ = 'MIT'
 
 
