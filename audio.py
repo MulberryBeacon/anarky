@@ -18,12 +18,20 @@ from os.path import basename, join, split
 from re import match
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
 
+import logging
+
+
+# Logger
+# ----------------------------------------------------------------------------------------------------------------------
+_logger = logging.getLogger(__name__)
+
 
 # Constants :: Error messages
 # ----------------------------------------------------------------------------------------------------------------------
+"""
 ERROR_WRONG_FILE_TYPE = 'The file \'{0}\' is not a valid {1} file!'
 WARNING_NO_JSON_FILE = 'No JSON file with ID3 tags was found. Proceeding with encoding operation without tags.'
-
+"""
 
 # Constants :: Lists and file extensions
 # ----------------------------------------------------------------------------------------------------------------------
@@ -289,11 +297,11 @@ def is_wav_file(filename):
 
     return 'audio/x-wav' in output
 
-
+"""
 def create_playlist(files, destination):
-    """
+
     Creates a playlist file (.m3u extension) for the given album.
-    """
+
     # Gets the album name and artist from the destination directory
     path = destination[:-1] if destination.endswith('/') else destination
     # TODO: need to validate if the destination directory contains the album name and artist.
@@ -311,3 +319,4 @@ def create_playlist(files, destination):
     with open(output_file, 'w') as playlist_file:
         for audio_file in files:
             playlist_file.write('%s\n' % basename(audio_file))
+"""

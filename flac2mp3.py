@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python
 # -*- coding: utf8 -*-
 
 """
@@ -14,10 +14,12 @@ from audio import encode_flac_mp3
 from general import keyboard_interrupt
 from interface import get_options
 
+
 # Constants
 # -------------------------------------------------------------------------------------------------
 PROGRAM = 'flac2mp3'
 DESCRIPTION = 'Encodes FLAC files into the MP3 format with the maximum compression level'
+
 
 # Methods :: Execution and boilerplate
 # -------------------------------------------------------------------------------------------------

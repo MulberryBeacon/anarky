@@ -1,7 +1,7 @@
-# FLAC Manager
+# Anarky
 
-A set of simple programs for encoding and decoding operations between several
-types of audio files.
+A set of simple programs for encoding and decoding between several types of
+audio files.
 
 ## Programs
 
@@ -71,21 +71,10 @@ the given folder, along with the extracted cover art and ID3 tags file.
 
 See [CHANGELOG](CHANGELOG.md) for details.
 
-## Bugs
-
-* `flac2mp3` doesn't remove the temporary files that are extracted from the input FLAC files (WAV and cover art files). Code still needs to be implement to perform this step
-
-## Roadmap
-
-Future versions will have the following features:
-
-* A new master control program (nudge nudge, wink wink) that could be used instead of the individual programs. It will have two additional options for the desired input and output formats, while keeping the set of options outlined for the current set of programs
-* An installation script that will avoid any manual configuration to make the programs globally available in a system (path, location, etc.)
-* A synchronization mechanism that can replicate the tree structure of the FLAC folder and automatically convert every album to MP3
-
 ## Dependencies
 
-All development and testing activities are carried out on Linux using Python 3.4.3. The following packages are required:
+All development and testing activities are carried out on Mac OS X 10.11.3 using
+Python 3.5.1. The following packages are required:
 
 * `lame`
 * `flac`
@@ -143,6 +132,8 @@ Generated using David A. Wheeler's 'SLOCCount'.
 
 ## License
 
-Copyright © 2012-2015 Eduardo Ferreira
+Copyright © 2012-2016 Eduardo Ferreira
 
-The code in this repository is MIT licensed, and therefore free to use as you please for commercial or non-commercial purposes (see [LICENSE](LICENSE) for details).
+The code in this repository is MIT licensed, and therefore free to use as you
+please for commercial or non-commercial purposes (see [LICENSE](LICENSE) for
+details).

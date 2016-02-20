@@ -11,13 +11,17 @@ License: MIT (see LICENSE for details)
 # Module import
 # ----------------------------------------------------------------------------------------------------------------------
 from os.path import basename, join, splitext
-
 import logging
 
 
 # Logger
 # ----------------------------------------------------------------------------------------------------------------------
 _logger = logging.getLogger(__name__)
+
+
+# Constants :: Error messages
+# ----------------------------------------------------------------------------------------------------------------------
+WARNING_NO_JSON_FILE = 'No JSON file with ID3 tags was found. Proceeding with encoding operation without tags.'
 
 
 # Methods :: Text manipulation

@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python
 # -*- coding: utf8 -*-
 
 """
@@ -14,10 +14,12 @@ from audio import decode_flac_wav, write_tags
 from general import keyboard_interrupt
 from interface import get_options
 
+
 # Constants
 # -------------------------------------------------------------------------------------------------
 PROGRAM = 'flac2wav'
 DESCRIPTION = 'Decodes FLAC files into the WAV format'
+
 
 # Methods :: Execution and boilerplate
 # -------------------------------------------------------------------------------------------------
