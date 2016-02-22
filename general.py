@@ -16,6 +16,7 @@ import logging
 
 # Logger
 # ----------------------------------------------------------------------------------------------------------------------
+logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 

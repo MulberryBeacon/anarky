@@ -32,6 +32,7 @@ __license__ = 'MIT'
 
 # Logger
 # ----------------------------------------------------------------------------------------------------------------------
+logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
@@ -99,7 +100,7 @@ def parse_options(program, description, decode=False):
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-p', '--playlist', action='store_true', default='False', help='create playlist file')
     tags_help = '%s ID3 tags' % ('extract' if decode else 'add')
-    parser.add_argument('-t', '--tags', action='store_true', default='False', help=tags_help)
+    parser.add_argument('-t', '--tags', action='store_true', help=tags_help)
     cover_help = '{} album art'
     if decode:
         parser.add_argument('-c', '--cover', action='store_true', help=cover_help.format('extract'))

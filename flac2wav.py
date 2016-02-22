@@ -32,11 +32,6 @@ if __name__ == '__main__':
             output_file = decode_flac_wav(item, destination, cover, tags)
             if output_file:
                 output_files.append(output_file[0])
-                write_tags(output_file[0], output_file[2])
-
-        if playlist:
-            from audio import create_playlist
-            create_playlist(output_files, destination)
 
     except KeyboardInterrupt:
         keyboard_interrupt()

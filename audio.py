@@ -22,6 +22,7 @@ import logging
 
 # Logger
 # ----------------------------------------------------------------------------------------------------------------------
+logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
@@ -328,27 +329,3 @@ def is_wav_file(filename):
             return False
 
     return 'audio/x-wav' in output
-
-"""
-def create_playlist(files, destination):
-
-    Creates a playlist file (.m3u extension) for the given album.
-
-    # Gets the album name and artist from the destination directory
-    path = destination[:-1] if destination.endswith('/') else destination
-    # TODO: need to validate if the destination directory contains the album name and artist.
-    #       If it doesn't, the following exception is thrown:        
-    # Traceback (most recent call last):
-    #     File "wav2flac.py", line 40, in <module>
-    #         create_playlist(output_files, destination)
-    #     File "/Users/brucewayne/work/github/flac-manager/audio.py", line 294, in create_playlist
-    #         output_file = join(destination, '00. {0} - {1}.m3u'.format(groups.group(1), groups.group(2)))
-    # AttributeError: 'NoneType' object has no attribute 'group'
-    groups = match(r'\(\d+\)\s([\s\w]+)\s-\s([\s\w]+)', split(path)[1])
-    output_file = join(destination, '00. {0} - {1}.m3u'.format(groups.group(1), groups.group(2)))
-
-    # Creates a new file with the specified name and writes the list of files
-    with open(output_file, 'w') as playlist_file:
-        for audio_file in files:
-            playlist_file.write('%s\n' % basename(audio_file))
-"""

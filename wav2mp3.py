@@ -43,9 +43,5 @@ if __name__ == '__main__':
             if output_file:
                 output_files.append(output_file[0])
 
-        if playlist:
-            from audio import create_playlist
-            create_playlist(output_files, destination)
-
     except KeyboardInterrupt:
         keyboard_interrupt()

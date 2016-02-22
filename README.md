@@ -113,7 +113,7 @@ SUM:                             7            153            321            271
 
 ```sh
 SLOC	Directory	SLOC-by-Language (Sorted)
-271     top_dir         python=271
+271     top_dir     python=271
 
 Totals grouped by language (dominant language first):
 python:         271 (100.00%)
@@ -131,7 +131,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
 redistribute it under certain conditions as specified by the GNU GPL license;
 see the documentation for details.
-Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+Please credit this data as \"generated using David A. Wheeler's 'SLOCCount'.\"
 ```
 
 ## License
