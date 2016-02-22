@@ -85,27 +85,27 @@ Python 3.5.1. The following packages are required:
 * CLOC
 
 ```sh
-http://cloc.sourceforge.net v 1.62  T=0.10 s (71.5 files/s, 6550.5 lines/s)
+http://cloc.sourceforge.net v 1.60  T=0.01 s (892.6 files/s, 95000.5 lines/s)
 -------------------------------------------------------------------------------
 File                             blank        comment           code
 -------------------------------------------------------------------------------
-./audio.py                          60            116            123
-./interface.py                      24             35             52
-./wav2mp3.py                         9             13             21
-./wav2flac.py                        9             13             21
-./flac2wav.py                        8             13             19
-./general.py                        15             32             19
-./flac2mp3.py                        8             13             18
+audio.py                            64            173            117
+interface.py                        28             51             59
+wav2flac.py                         13             15             23
+wav2mp3.py                          13             15             23
+flac2wav.py                         10             13             19
+flac2mp3.py                         10             13             18
+general.py                          15             41             12
 -------------------------------------------------------------------------------
-SUM:                               133            235            273
+SUM:                               153            321            271
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                           7            133            235            273
+Python                           7            153            321            271
 -------------------------------------------------------------------------------
-SUM:                             7            133            235            273
+SUM:                             7            153            321            271
 -------------------------------------------------------------------------------
 ```
 
@@ -113,21 +113,25 @@ SUM:                             7            133            235            273
 
 ```sh
 SLOC	Directory	SLOC-by-Language (Sorted)
-273     top_dir     python=273
+271     top_dir         python=271
 
 Totals grouped by language (dominant language first):
-python:         273 (100.00%)
+python:         271 (100.00%)
 
-Total Physical Source Lines of Code (SLOC)                = 273
+Total Physical Source Lines of Code (SLOC)                = 271
 Development Effort Estimate, Person-Years (Person-Months) = 0.05 (0.61)
  (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
-Schedule Estimate, Years (Months)                         = 0.17 (2.08)
+Schedule Estimate, Years (Months)                         = 0.17 (2.07)
  (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
-Estimated Average Number of Developers (Effort/Schedule)  = 0.30
-Total Estimated Cost to Develop                           = $ 2,648
- (average salary = $86,261/year, overhead = 0.60).
- 
-Generated using David A. Wheeler's 'SLOCCount'.
+Estimated Average Number of Developers (Effort/Schedule)  = 0.29
+Total Estimated Cost to Develop                           = $ 1,755
+ (average salary = $57,618/year, overhead = 0.60).
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
 ```
 
 ## License

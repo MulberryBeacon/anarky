@@ -6,7 +6,6 @@ Version 0.0.1
 * Changed app name to Anarky
 * Added a logger
 * Reviewed the method headers to add parameter and return descriptions
-* Added input parameter validation
 * Small refactoring to group tightly coupled code in the same Python files
 * Made sure that all workflows are working without any tag, cover and playlist management
 

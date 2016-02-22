@@ -14,10 +14,9 @@ from general import is_string_empty, update_extension, update_path
 
 from enum import Enum
 from json import dump, load
-from os.path import basename, join, split
+from os.path import basename, join
 from re import match
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
-
 import logging
 
 
@@ -79,6 +78,11 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
     Also retrieves its ID3 tags and album cover.
+    :param filename: The input audio file name
+    :param destination: The destination where the output file will be stored
+    :param extract_cover: Indicates if the album art should be extracted from the audio file
+    :param extract_tags: Indicates if the ID3 tags should be extracted from the audio file
+    :return: A tuple with three file names: output audio file, album art file and ID3 tags file
     """
     if not is_flac_file(filename):
         # TODO: check how this return integrates in the FLAC=>MP3 workflow
@@ -93,14 +97,19 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
 
     # Checks if both cover and tags should be retrieved
     cover = get_cover(filename, destination) if extract_cover else None
-    tags = get_tags(filename, destination) if extract_tags else None
+    tags = get_tags(filename) if extract_tags else None
 
-    return (output_filename, cover, tags)
+    return output_filename, cover, tags
 
 
 def encode_wav_flac(filename, destination, cover=None, tags=None):
     """
     Encodes a WAV audio file, generating the corresponding FLAC audio file.
+    :param filename: The input audio file name
+    :param destination: The destination where the output file will be stored
+    :param cover: The name of the file with the album art
+    :param tags: The name of the file with the ID3 tags
+    :return: The name of the output audio file
     """
     if not is_wav_file(filename):
         # TODO: check how this return integrates in the FLAC=>MP3 workflow
@@ -135,6 +144,11 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
 def encode_wav_mp3(filename, destination, cover=None, tags=None):
     """
     Encodes a WAV audio file, generating the corresponding MP3 audio file.
+    :param filename: The input audio file name
+    :param destination: The destination where the output file will be stored
+    :param cover: The name of the file with the album art
+    :param tags: The name of the file with the ID3 tags
+    :return: The name of the output audio file
     """
     if not is_wav_file(filename):
         # TODO: check how this return integrates in the FLAC=>MP3 workflow
@@ -173,12 +187,17 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
     return output_filename
 
 
-def encode_flac_mp3(filename, destination, get_cover=False, get_tags=False):
+def encode_flac_mp3(filename, destination, extract_cover=False, extract_tags=False):
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
     The WAV audio file is then encoded, generating the corresponding MP3 audio file.
+    :param filename: The input audio file name
+    :param destination: The destination where the output file will be stored
+    :param extract_cover: Indicates if the album art should be extracted from the audio file
+    :param extract_tags: Indicates if the ID3 tags should be extracted from the audio file
+    :return: The name of the output audio file
     """
-    wav_file = decode_flac_wav(filename, destination, get_cover, get_tags)
+    wav_file = decode_flac_wav(filename, destination, extract_cover, extract_tags)
     if wav_file:
         cover = wav_file[1] if get_cover else None
         tags = wav_file[2] if get_tags else None
@@ -192,6 +211,9 @@ def encode_flac_mp3(filename, destination, get_cover=False, get_tags=False):
 def get_cover(filename, destination):
     """
     Retrieves the front cover art file from a FLAC audio file and stores it in the destination directory.
+    :param filename: The input audio file name
+    :param destination: The destination where the output file will be stored
+    ;return: The name of the album art file
     """
     # Prepares the 'metaflac' program arguments:
     # --list       => Lists the full stack of metadata
@@ -227,12 +249,14 @@ def get_cover(filename, destination):
 def read_tags(filename):
     """
     Reads a JSON file with ID3 tags.
+    :param filename: The input audio file name
+    :return: The name of the ID3 tags file
     """
-    tags = None
     try:
         with open(update_extension(filename, '.json'), 'r') as tags_file:
             tags = load(tags_file)
 
+    # TODO: need to decide if the exception will be used
     except FileNotFoundError as e:
         return None
 
@@ -242,14 +266,18 @@ def read_tags(filename):
 def write_tags(filename, tags):
     """
     Writes ID3 tags to a JSON file.
+    :param filename: The input audio file name
+    :param tags: The list of ID3 tags written to the audio file
     """
     with open(update_extension(filename, '.json'), 'w') as tags_file:
         dump(tags, tags_file, indent=4)
 
 
-def get_tags(filename, destination):
+def get_tags(filename):
     """
     Retrieves the tag values of a FLAC audio file.
+    :param filename: The input audio file name
+    :return: The list of ID3 tags retrieved from the audio file
     """
     tags = {}
     for tag in TAGS:
@@ -269,6 +297,8 @@ def get_tags(filename, destination):
 def is_flac_file(filename):
     """
     Checks if the given file is a valid FLAC audio file.
+    :param filename: The input audio file name
+    :return: True if the input file is a FLAC audio file: False otherwise
     """
     # Prepares the 'metaflac' program arguments:
     # --show-md5sum => Show the MD5 signature from the STREAMINFO block
@@ -285,6 +315,8 @@ def is_flac_file(filename):
 def is_wav_file(filename):
     """
     Checks if the given file is a valid WAV audio file.
+    :param filename: The input audio file name
+    :return: True if the input file is a WAV audio file: False otherwise
     """
     # Prepares the 'file' program arguments:
     # --mime-type => Output the MIME type
