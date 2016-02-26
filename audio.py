@@ -18,6 +18,7 @@ from os.path import basename, join
 from re import match
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
 import logging
+import sys
 
 
 # Logger
@@ -28,6 +29,7 @@ _logger = logging.getLogger(__name__)
 
 # Constants :: Error messages
 # ----------------------------------------------------------------------------------------------------------------------
+ERROR_PROGRAM_NOT_FOUND = 'Program \'{}\' was not found!'
 """
 ERROR_WRONG_FILE_TYPE = 'The file \'{0}\' is not a valid {1} file!'
 WARNING_NO_JSON_FILE = 'No JSON file with ID3 tags was found. Proceeding with encoding operation without tags.'
@@ -53,24 +55,35 @@ DISCTOTAL   : Number of discs that compose the set
 TRACKTOTAL  : Number of tracks in the album
 """
 TAGS = {
-    'TITLE'      : '--tt',
-    'ARTIST'     : '--ta',
-    'ALBUM'      : '--tl',
+    'TITLE': '--tt',
+    'ARTIST': '--ta',
+    'ALBUM': '--tl',
     'TRACKNUMBER': '--tn',
     'ALBUMARTIST': ['--tv', 'TPE2='],
-    'GENRE'      : '--tg',
-    'DATE'       : '--ty',
-    'DISCTOTAL'  : ['--tv', 'TPOS='],
-    'TRACKTOTAL' : ''
+    'GENRE': '--tg',
+    'DATE': '--ty',
+    'DISCTOTAL': ['--tv', 'TPOS='],
+    'TRACKTOTAL': ''
 }
 
 
-# Class to represent audio file extensions
+# Classes
 # ----------------------------------------------------------------------------------------------------------------------
+# Represents audio file extensions
 class AudioFile(Enum):
     flac = '.flac'
     mp3 = '.mp3'
     wav = '.wav'
+
+
+# Represents external programs used in the encoding and decoding operations
+class Programs(Enum):
+    flac = 'flac'
+    metaflac = 'metaflac'
+    lame = 'lame'
+    grep = 'grep'
+    sed = 'sed'
+    file = 'file'
 
 
 # Methods :: File encoding and decoding
@@ -85,8 +98,9 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
     :param extract_tags: Indicates if the ID3 tags should be extracted from the audio file
     :return: A tuple with three file names: output audio file, album art file and ID3 tags file
     """
+    is_program_available(Programs.flac.value)
+
     if not is_flac_file(filename):
-        # TODO: check how this return integrates in the FLAC=>MP3 workflow
         return None
 
     # Invokes the 'flac' program with the following arguments:
@@ -94,7 +108,7 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
     # -f => Force overwriting of output files
     # -o => Force the output file name
     output_filename = update_path(filename, destination, AudioFile.wav.value)
-    call(['flac', '-df', filename, '-o', output_filename])
+    call([Programs.flac.value, '-df', filename, '-o', output_filename])
 
     # Checks if both cover and tags should be retrieved
     cover = get_cover(filename, destination) if extract_cover else None
@@ -112,8 +126,9 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
     :param tags: The name of the file with the ID3 tags
     :return: The name of the output audio file
     """
+    is_program_available(Programs.flac.value)
+
     if not is_wav_file(filename):
-        # TODO: check how this return integrates in the FLAC=>MP3 workflow
         return None
 
     # Prepares the 'flac' program arguments:
@@ -122,7 +137,7 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
     # -V => Verify a correct encoding
     # -o => Force the output file name
     output_filename = update_path(filename, destination, AudioFile.flac.value)
-    flac = ['flac', '-f8V', '-o', output_filename]
+    flac = [Programs.flac.value, '-f8V', '-o', output_filename]
 
     # Prepares the cover file to be passed as a parameter
     # --picture=SPECIFICATION => Import picture and store in PICTURE block
@@ -151,8 +166,9 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
     :param tags: The name of the file with the ID3 tags
     :return: The name of the output audio file
     """
+    is_program_available(Programs.lame.value)
+
     if not is_wav_file(filename):
-        # TODO: check how this return integrates in the FLAC=>MP3 workflow
         return None
 
     # Prepares the 'lame' program arguments:
@@ -161,7 +177,7 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
     # --preset insane => Type of the quality settings
     # --id3v2-only    => Add only a version 2 tag
     output_filename = update_path(filename, destination, AudioFile.mp3.value)
-    lame = ['lame', '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only']
+    lame = [Programs.lame.value, '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only']
 
     # Prepares the cover file to be passed as a parameter
     # --ti <file> => Audio/song albumArt (jpeg/png/gif file, v2.3 tag)
@@ -216,16 +232,20 @@ def get_cover(filename, destination):
     :param destination: The destination where the output file will be stored
     ;return: The name of the album art file
     """
+    is_program_available(Programs.metaflac.value)
+    is_program_available(Programs.grep.value)
+    is_program_available(Programs.sed.value)
+
     # Prepares the 'metaflac' program arguments:
     # --list       => Lists the full stack of metadata
     # --block-type => Comma-separated list of block types to be included
-    metaflac = ['metaflac', '--list', '--block-type=PICTURE', filename]
+    metaflac = [Programs.metaflac.value, '--list', '--block-type=PICTURE', filename]
 
     # Prepares the 'grep' program arguments (looks for description parameter)
-    grep = ['grep', 'description:']
+    grep = [Programs.grep.value, 'description:']
 
     # Prepares the 'sed' program arguments (the regular expression removes the parameter name)
-    sed = ['sed', 's/.*: //']
+    sed = [Programs.sed.value, 's/.*: //']
 
     # Invokes the 'metaflac', 'grep' and 'sed' programs to retrieve the cover file name
     p1 = Popen(metaflac, stdout=PIPE)
@@ -240,7 +260,7 @@ def get_cover(filename, destination):
     # Prepares the 'metaflac' program arguments:
     # --export-picture-to => Export PICTURE block to a file
     cover = join(destination, cover)
-    call(['metaflac', '--export-picture-to=' + cover, filename])
+    call([Programs.metaflac.value, '--export-picture-to=' + cover, filename])
 
     return cover
 
@@ -256,9 +276,7 @@ def read_tags(filename):
     try:
         with open(update_extension(filename, '.json'), 'r') as tags_file:
             tags = load(tags_file)
-
-    # TODO: need to decide if the exception will be used
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         return None
 
     return tags
@@ -280,12 +298,14 @@ def get_tags(filename):
     :param filename: The input audio file name
     :return: The list of ID3 tags retrieved from the audio file
     """
+    is_program_available(Programs.metaflac.value)
+
     tags = {}
     for tag in TAGS:
 
         # Invokes the 'metaflac' program with the following arguments:
         # --show-tag => Shows the value of the given tag
-        p = Popen(['metaflac', '--show-tag=' + tag, filename], stdout=PIPE)
+        p = Popen([Programs.metaflac.value, '--show-tag=' + tag, filename], stdout=PIPE)
         value = p.stdout.read().decode(ENCODING).rstrip('\n')
         if value:
             tags[tag] = value.split('=')[1]
@@ -299,13 +319,15 @@ def is_flac_file(filename):
     """
     Checks if the given file is a valid FLAC audio file.
     :param filename: The input audio file name
-    :return: True if the input file is a FLAC audio file: False otherwise
+    :return: True if the input file is a FLAC audio file; False otherwise
     """
-    # Prepares the 'metaflac' program arguments:
+    is_program_available(Programs.metaflac.value)
+
+    # Invokes the 'metaflac' program with the following arguments:
     # --show-md5sum => Show the MD5 signature from the STREAMINFO block
     output = ''
     try:
-        output = check_output(['metaflac', '--show-md5sum', filename]).decode(ENCODING)
+        output = check_output([Programs.metaflac.value, '--show-md5sum', filename]).decode(ENCODING)
     except CalledProcessError as e:
         if e.returncode == 1:
             return False
@@ -317,15 +339,33 @@ def is_wav_file(filename):
     """
     Checks if the given file is a valid WAV audio file.
     :param filename: The input audio file name
-    :return: True if the input file is a WAV audio file: False otherwise
+    :return: True if the input file is a WAV audio file; False otherwise
     """
-    # Prepares the 'file' program arguments:
+    is_program_available(Programs.file.value)
+
+    # Invokes the 'file' program with the following arguments:
     # --mime-type => Output the MIME type
     output = ''
     try:
-        output = check_output(['file', '--mime-type', filename]).decode(ENCODING)
+        output = check_output([Programs.file.value, '--mime-type', filename]).decode(ENCODING)
     except CalledProcessError as e:
         if e.returncode == 1:
             return False
 
     return 'audio/x-wav' in output
+
+
+# Methods :: External program validation
+# ----------------------------------------------------------------------------------------------------------------------
+def is_program_available(program):
+    """
+    Checks if an external program is present in the operating system.
+    :param program: The name of the external program
+    :return: True if the program is present in the operating system; False otherwise
+    """
+    # The output of the following command should be something like:
+    # flac: /usr/bin/flac /usr/share/man/man1/flac.1.gz
+    output = Popen(['whereis', program], stdout=PIPE).communicate()[0]
+    if len(output.split()) == 1:
+        _logger.error(ERROR_PROGRAM_NOT_FOUND.format(program))
+        sys.exit(1)

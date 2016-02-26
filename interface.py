@@ -70,6 +70,19 @@ def get_input_files(entries):
     :param entries: The set of input entries (can be either files or directories)
     :return: A complete list of the input files
     """
+    """
+    assert isinstance(df, frame.DataFrame), 'df must be a pandas.core.frame.DataFrame.'
+    assert (isinstance(top_n, int) and top_n >= 1), 'top_n must be a positive int.'
+    assert (isinstance(min_of_best_class, float) and 0 <= min_of_best_class <= 1), 'min_of_best_class must be a positive int.'
+    assert (isinstance(min_of_other_classes, float) and 0 <= min_of_best_class <= 1), 'min_of_other_classes must be a positive int.'
+    assert (min_of_other_classes <= min_of_best_class), 'min_of_other_classes less than or equal to min_of_best_class.'
+    """
+    #assert isinstance(entries, list), 'You need to provide a list of strings.'
+    #assert isinstance(l)
+
+    #if not entries:
+    #    raise
+
     result = []
     for entry in entries:
         if isfile(entry):
