@@ -9,7 +9,7 @@ License: MIT (see LICENSE for details)
 """
 
 # Module import
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 from general import is_string_empty, update_extension, update_path
 
 from enum import Enum
@@ -22,33 +22,30 @@ import sys
 
 
 # Logger
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
 # Constants :: Error messages
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 ERROR_PROGRAM_NOT_FOUND = 'Program \'{}\' was not found!'
-"""
-ERROR_WRONG_FILE_TYPE = 'The file \'{0}\' is not a valid {1} file!'
-WARNING_NO_JSON_FILE = 'No JSON file with ID3 tags was found. Proceeding with encoding operation without tags.'
-"""
+
 
 # Constants :: Lists and file extensions
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 ENCODING = 'utf-8'
 
 """
 TITLE       : Track/Work name
-ARTIST      : The artist generally considered responsible for the work. In popular music this is usually the performing
-              band or singer. For classical music it would be the composer. For an audio book it would be the author of
-              the original text
+ARTIST      : The artist generally considered responsible for the work. In popular music this is
+              usually the performing band or singer. For classical music it would be the composer.
+              For an audio book it would be the author of the original text
 ALBUM       : The collection name to which this track belongs
 TRACKNUMBER : The track number of this piece if part of a specific larger collection or album
-ALBUMARTIST : The artist(s) who performed the work. In classical music this would be the conductor, orchestra, soloists.
-              In an audio book it would be the actor who did the reading. In popular music this is typically the same as
-              the ARTIST and is omitted
+ALBUMARTIST : The artist(s) who performed the work. In classical music this would be the conductor,
+              orchestra, soloists. In an audio book it would be the actor who did the reading. In
+              popular music this is typically the same as the ARTIST and is omitted
 GENRE       : A short text indication of music genre
 DATE        : Date the track was recorded
 DISCTOTAL   : Number of discs that compose the set
@@ -68,7 +65,7 @@ TAGS = {
 
 
 # Classes
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 # Represents audio file extensions
 class AudioFile(Enum):
     flac = '.flac'
@@ -87,7 +84,7 @@ class Programs(Enum):
 
 
 # Methods :: File encoding and decoding
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=False):
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
@@ -195,7 +192,9 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
             if tag == 'TRACKNUMBER':
                 value += '/' + tags['TRACKTOTAL']
 
-            lame.extend([id3_tag, value] if type(id3_tag) is not list else [id3_tag[0], id3_tag[1] + value])
+            lame.extend([id3_tag, value]
+                if type(id3_tag) is not list
+                else [id3_tag[0], id3_tag[1] + value])
 
     # Invokes the 'lame' program
     lame.extend([filename, output_filename])
@@ -224,10 +223,11 @@ def encode_flac_mp3(filename, destination, extract_cover=False, extract_tags=Fal
 
 
 # Methods :: Album cover management
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 def get_cover(filename, destination):
     """
-    Retrieves the front cover art file from a FLAC audio file and stores it in the destination directory.
+    Retrieves the front cover art file from a FLAC audio file and stores it in the destination
+    directory.
     :param filename: The input audio file name
     :param destination: The destination where the output file will be stored
     ;return: The name of the album art file
@@ -266,7 +266,7 @@ def get_cover(filename, destination):
 
 
 # Methods :: Tag management
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 def read_tags(filename):
     """
     Reads a JSON file with ID3 tags.
@@ -314,7 +314,7 @@ def get_tags(filename):
 
 
 # Methods :: File management
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 def is_flac_file(filename):
     """
     Checks if the given file is a valid FLAC audio file.
@@ -356,7 +356,7 @@ def is_wav_file(filename):
 
 
 # Methods :: External program validation
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 def is_program_available(program):
     """
     Checks if an external program is present in the operating system.
