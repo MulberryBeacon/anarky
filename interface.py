@@ -9,7 +9,7 @@ License: MIT (see LICENSE for details)
 """
 
 # Module import
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 from os import walk
 from os.path import isdir, isfile, join
 
@@ -19,25 +19,25 @@ import sys
 
 
 # Constants
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 ERROR = '{0} \'{1}\' is not available (doesn\'t exist or no privileges to access it)!'
 
 
 # Project information
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 __author__ = 'Eduardo Ferreira'
 __version__ = '0.0.1'
 __license__ = 'MIT'
 
 
 # Logger
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
 # Methods :: File system library
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 def file_exists(filename):
     """
     Checks if a file is a valid filesystem entry.
@@ -70,18 +70,7 @@ def get_input_files(entries):
     :param entries: The set of input entries (can be either files or directories)
     :return: A complete list of the input files
     """
-    """
-    assert isinstance(df, frame.DataFrame), 'df must be a pandas.core.frame.DataFrame.'
-    assert (isinstance(top_n, int) and top_n >= 1), 'top_n must be a positive int.'
-    assert (isinstance(min_of_best_class, float) and 0 <= min_of_best_class <= 1), 'min_of_best_class must be a positive int.'
-    assert (isinstance(min_of_other_classes, float) and 0 <= min_of_best_class <= 1), 'min_of_other_classes must be a positive int.'
-    assert (min_of_other_classes <= min_of_best_class), 'min_of_other_classes less than or equal to min_of_best_class.'
-    """
     #assert isinstance(entries, list), 'You need to provide a list of strings.'
-    #assert isinstance(l)
-
-    #if not entries:
-    #    raise
 
     result = []
     for entry in entries:
@@ -99,7 +88,7 @@ def get_input_files(entries):
 
 
 # Methods :: Command line options and instructions
-# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 def parse_options(program, description, decode=False):
     """
     Parses and retrieves the values for the full set of command line arguments.
@@ -111,7 +100,8 @@ def parse_options(program, description, decode=False):
     # Defines the parent parser
     parser = argparse.ArgumentParser(prog=program, description=description)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-    parser.add_argument('-p', '--playlist', action='store_true', default='False', help='create playlist file')
+    parser.add_argument('-p', '--playlist', action='store_true', default='False', help='create'\
+        'playlist file')
     tags_help = '%s ID3 tags' % ('extract' if decode else 'add')
     parser.add_argument('-t', '--tags', action='store_true', help=tags_help)
     cover_help = '{} album art'
