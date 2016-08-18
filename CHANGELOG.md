@@ -1,5 +1,15 @@
 ## History
 
+Version 0.0.2
+
+* Added input parameter validation for the methods in the audio library
+* Added external dependency validation for the following programs:
+  * lame
+  * flac
+  * metaflac
+  * grep
+  * sed
+
 Version 0.0.1
 
 * Reset the version number to 0.0.1
