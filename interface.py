@@ -20,7 +20,7 @@ import sys
 
 # Constants
 # --------------------------------------------------------------------------------------------------
-ERROR = '{} \'{}\' is not available (doesn\'t exist or no privileges to access it)!'
+ERROR = "{} '{}' is not available (doesn't exist or no privileges to access it)!"
 
 
 # Project information
@@ -98,26 +98,26 @@ def parse_options(program, description, decode=False):
     # Defines the parent parser
     parser = argparse.ArgumentParser(prog=program, description=description)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-    # TODO: hiding the playlist parameter because it'll only be tackled in a future version
+    # TODO: keeping only the parameters for input files and output location because they will only
+    # be tackled in a future version
     #parser.add_argument('-p', '--playlist', action='store_true', default='False',
     #    help='create playlist file')
-    tags_help = '{} ID3 tags'.format('extract' if decode else 'add')
-    parser.add_argument('-t', '--tags', action='store_true', help=tags_help)
-    cover_help = '{} album art'
-    if decode:
-        parser.add_argument('-c', '--cover', action='store_true',
-            help=cover_help.format('extract'))
-    else:
-        parser.add_argument('-c', '--cover', metavar='IMG', dest='cover',
-            help=cover_help.format('add'))    
+    #tags_help = '{} ID3 tags'.format('extract' if decode else 'add')
+    #parser.add_argument('-t', '--tags', action='store_true', help=tags_help)
+    #cover_help = '{} album art'
+    #if decode:
+    #    parser.add_argument('-c', '--cover', action='store_true',
+    #        help=cover_help.format('extract'))
+    #else:
+    #    parser.add_argument('-c', '--cover', metavar='IMG', dest='cover',
+    #        help=cover_help.format('add'))    
 
     group = parser.add_argument_group('options')
     group.add_argument('-f', '--files', nargs='+', metavar='FILES', dest='input_files',
         help='input files', required=True)
     # TODO: the destination probably shouldn't be a required parameter. And the name could be
     # changed to "output"...
-    group.add_argument('-d', '--dest', metavar='DEST', dest='output_dir', help='output directory',
-        required=True)
+    group.add_argument('-o', '--output', metavar='OUTPUT', dest='output_dir', help='output directory')
 
     return parser.parse_args()
 
