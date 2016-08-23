@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # --------------------------------------------------------------------------------------------------
-import lib.interface as interface
+import library.interface as interface
 import tempfile
 import unittest
 
@@ -26,11 +26,11 @@ class InterfaceTests(unittest.TestCase):
 
     def test_file_exists_empty(self):
         result = interface.file_exists('')
-        self.assertEqual(result, True)
+        self.assertEqual(result, False)
 
     def test_file_exists(self):
         temp_file = tempfile.mkstemp()[1]
-        result = interface.file_exists('')
+        result = interface.file_exists(temp_file)
         self.assertEqual(result, True)
 
     # Tests for method "directory_exists"
@@ -40,7 +40,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_directory_exists_empty(self):
         result = interface.directory_exists('')
-        self.assertEqual(result, True)
+        self.assertEqual(result, False)
 
     def test_directory_exists(self):
         temp_directory = tempfile.mkdtemp()
