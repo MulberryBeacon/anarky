@@ -21,6 +21,7 @@ import sys
 # Constants
 # --------------------------------------------------------------------------------------------------
 ERROR = "{} '{}' is not available (doesn't exist or no privileges to access it)!"
+ERROR_INVALID = "{} '{}' is invalid!"
 
 
 # Project information
@@ -40,12 +41,16 @@ _logger = logging.getLogger(__name__)
 # --------------------------------------------------------------------------------------------------
 def file_exists(filename):
     """
-    Checks if a file is a valid filesystem entry.
+    Checks if a file is a valid file system entry.
     :param filename: The name of a file
     :return: True if the given file name matches an actual file; False otherwise
     """
-    if not isfile(filename):
-        _logger.error(ERROR.format('File', filename))
+    try:
+        if not isfile(filename):
+            _logger.error(ERROR.format('File', filename))
+    except TypeError:
+        _logger.error(ERROR_INVALID.format('File', filename))
+    finally:
         return False
 
     return True
@@ -57,8 +62,12 @@ def directory_exists(directory):
     :param directory: The name of a directory
     :return: True if the given directory name matches an actual directory; False otherwise
     """
-    if not isdir(directory):
-        _logger.error(ERROR.format('Directory', directory))
+    try:
+        if not isdir(directory):
+            _logger.error(ERROR.format('Directory', directory))
+    except TypeError:
+        _logger.error(ERROR_INVALID.format('Directory', filename))
+    finally:
         return False
 
     return True
@@ -71,16 +80,19 @@ def get_input_files(entries):
     :return: A complete list of the input files
     """
     result = []
-    for entry in entries:
-        if isfile(entry):
-            result.append(entry)
-        elif isdir(entry):
-            for root, directories, files in walk(entry):
-                for filename in files:
-                    file_path = join(root, filename)
-                    result.append(file_path)
-        else:
-            _logger.error(ERROR.format('File system entry', entry))
+    try:
+        for entry in entries:
+            if isfile(entry):
+                result.append(entry)
+            elif isdir(entry):
+                for root, directories, files in walk(entry):
+                    for filename in files:
+                        file_path = join(root, filename)
+                        result.append(file_path)
+            else:
+                _logger.error(ERROR.format('File system entry', entry))
+    except TypeError:
+        _logger.error(ERROR.format('', entry))
 
     return result
 
@@ -145,3 +157,4 @@ def get_options(program, description, decode=False):
         sys.exit(1)
 
     return files, args.output_dir, args.cover, args.tags, args.playlist
+
