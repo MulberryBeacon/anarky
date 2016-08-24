@@ -47,6 +47,23 @@ class InterfaceTests(unittest.TestCase):
         result = interface.directory_exists(temp_directory)
         self.assertEqual(result, True)
 
+    # Tests for method "get_input_files"
+    def test_get_input_files_none(self):
+        result = interface.get_input_files(None)
+        self.assertEqual(result, [])
+
+    def test_get_input_files_string(self):
+        result = interface.get_input_files('')
+        self.assertEqual(result, [])
+
+    def test_get_input_files_int(self):
+        result = interface.get_input_files(123)
+        self.assertEqual(result, [])
+
+    def test_get_input_files_int(self):
+        result = interface.get_input_files(True)
+        self.assertEqual(result, [])
+
 
 # Methods :: Execution and boilerplate
 # --------------------------------------------------------------------------------------------------

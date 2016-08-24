@@ -22,6 +22,7 @@ import sys
 # --------------------------------------------------------------------------------------------------
 ERROR = "{} '{}' is not available (doesn't exist or no privileges to access it)!"
 ERROR_INVALID = "{} '{}' is invalid!"
+ERROR_INVALID_LIST = 'The list of input files is invalid!'
 
 
 # Project information
@@ -92,7 +93,7 @@ def get_input_files(entries):
             else:
                 _logger.error(ERROR.format('File system entry', entry))
     except TypeError:
-        _logger.error(ERROR.format('', entry))
+        _logger.error(ERROR_INVALID_LIST)
 
     return result
 
