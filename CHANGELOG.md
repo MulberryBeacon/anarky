@@ -1,5 +1,15 @@
 ## History
 
+Version 0.0.3
+
+* Added input parameter validation for the methods in the interface module
+* Added unit tests for the interface module
+* Created a package for the library modules
+* Created a package for the unit tests
+* Reset the input parameters for the various scripts
+  * Kept the input and output parameters
+  * Removed all the remaining parameters (related to ID3 tags, album cover art and playlists)
+
 Version 0.0.2
 
 * Added input parameter validation for the methods in the audio library
