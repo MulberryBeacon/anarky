@@ -23,6 +23,7 @@ import sys
 ERROR = "{} '{}' is not available (doesn't exist or no privileges to access it)!"
 ERROR_INVALID = "{} '{}' is invalid!"
 ERROR_INVALID_LIST = 'The list of input files is invalid!'
+ERROR_EMPTY_LIST = 'The list of input files is empty!'
 
 
 # Project information
@@ -113,18 +114,19 @@ def parse_options(program, description, decode=False):
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     # TODO: keeping only the parameters for input files and output location because they will only
     # be tackled in a future version
-    #parser.add_argument('-p', '--playlist', action='store_true', default='False',
-    #    help='create playlist file')
-    #tags_help = '{} ID3 tags'.format('extract' if decode else 'add')
-    #parser.add_argument('-t', '--tags', action='store_true', help=tags_help)
-    #cover_help = '{} album art'
-    #if decode:
-    #    parser.add_argument('-c', '--cover', action='store_true',
-    #        help=cover_help.format('extract'))
-    #else:
-    #    parser.add_argument('-c', '--cover', metavar='IMG', dest='cover',
-    #        help=cover_help.format('add'))    
-
+    """
+    parser.add_argument('-p', '--playlist', action='store_true', default='False',
+        help='create playlist file')
+    tags_help = '{} ID3 tags'.format('extract' if decode else 'add')
+    parser.add_argument('-t', '--tags', action='store_true', help=tags_help)
+    cover_help = '{} album art'
+    if decode:
+        parser.add_argument('-c', '--cover', action='store_true',
+            help=cover_help.format('extract'))
+    else:
+        parser.add_argument('-c', '--cover', metavar='IMG', dest='cover',
+            help=cover_help.format('add'))    
+    """
     group = parser.add_argument_group('options')
     group.add_argument('-f', '--files', nargs='+', metavar='FILES', dest='input_files',
         help='input files', required=True)
@@ -148,14 +150,19 @@ def get_options(program, description, decode=False):
     # Checks the input files
     files = get_input_files(args.input_files)
     if len(files) == 0:
-        _logger.error('No files were provided!')
+        _logger.error(ERROR_EMPTY_LIST)
         sys.exit(1)
 
     # TODO: this bit needs to be completely reviewed!
     # Checks the output directory, cover and tag parameters 
+    """
     if not (directory_exists(args.output_dir) and not (
             not decode and args.cover is not None and not file_exists(args.cover))):
         sys.exit(1)
+    """
+    if not directory_exists(args.output_dir):
+        _logger.error(ERROR.format('Directory', args.output_dir))
+        sys.exit(1)
 
-    return files, args.output_dir, args.cover, args.tags, args.playlist
-
+    #return files, args.output_dir, args.cover, args.tags, args.playlist
+    return files, args.output_dir

@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # --------------------------------------------------------------------------------------------------
-from general import is_string_empty, update_extension, update_path
+from library.general import is_string_empty, update_extension, update_path
 
 from enum import Enum
 from json import dump, load

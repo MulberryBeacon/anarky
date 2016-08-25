@@ -60,7 +60,7 @@ class InterfaceTests(unittest.TestCase):
         result = interface.get_input_files(123)
         self.assertEqual(result, [])
 
-    def test_get_input_files_int(self):
+    def test_get_input_files_boolean(self):
         result = interface.get_input_files(True)
         self.assertEqual(result, [])
 
