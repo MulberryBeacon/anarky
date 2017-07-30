@@ -1,6 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf8 -*-
-
 """
 Audio library with conversion methods.
 
@@ -10,7 +8,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # --------------------------------------------------------------------------------------------------
-from library.general import is_string_empty, update_extension, update_path
+from anarky.library.general import is_string_empty, update_extension, update_path
 
 from enum import Enum
 from json import dump, load
@@ -20,17 +18,14 @@ from subprocess import call, CalledProcessError, check_output, PIPE, Popen
 import logging
 import sys
 
-
 # Logger
 # --------------------------------------------------------------------------------------------------
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
-
 # Constants :: Error messages
 # --------------------------------------------------------------------------------------------------
 ERROR_PROGRAM_NOT_FOUND = 'Program \'{}\' was not found!'
-
 
 # Constants :: Lists and file extensions
 # --------------------------------------------------------------------------------------------------
@@ -89,11 +84,17 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
     Also retrieves its ID3 tags and album cover.
-    :param filename: The input audio file name
-    :param destination: The destination where the output file will be stored
-    :param extract_cover: Indicates if the album art should be extracted from the audio file
-    :param extract_tags: Indicates if the ID3 tags should be extracted from the audio file
-    :return: A tuple with three file names: output audio file, album art file and ID3 tags file
+
+    :param filename:
+        The input audio file name
+    :param destination:
+        The destination where the output file will be stored
+    :param extract_cover:
+        Indicates if the album art should be extracted from the audio file
+    :param extract_tags:
+        Indicates if the ID3 tags should be extracted from the audio file
+    :return:
+        A tuple with three file names: output audio file, album art file and ID3 tags file
     """
     is_program_available(Programs.flac.value)
 
@@ -117,11 +118,17 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
 def encode_wav_flac(filename, destination, cover=None, tags=None):
     """
     Encodes a WAV audio file, generating the corresponding FLAC audio file.
-    :param filename: The input audio file name
-    :param destination: The destination where the output file will be stored
-    :param cover: The name of the file with the album art
-    :param tags: The name of the file with the ID3 tags
-    :return: The name of the output audio file
+
+    :param filename:
+        The input audio file name
+    :param destination:
+        The destination where the output file will be stored
+    :param cover:
+        The name of the file with the album art
+    :param tags:
+        The name of the file with the ID3 tags
+    :return:
+        The name of the output audio file
     """
     is_program_available(Programs.flac.value)
 

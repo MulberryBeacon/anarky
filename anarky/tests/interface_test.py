@@ -10,7 +10,7 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # --------------------------------------------------------------------------------------------------
-import library.interface as interface
+import anarky.library.interface as interface
 import tempfile
 import unittest
 

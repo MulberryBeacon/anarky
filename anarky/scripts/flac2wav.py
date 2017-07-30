@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 
 """
-Encodes FLAC files into the MP3 format with the maximum compression level.
+Decodes FLAC files into the WAV format.
 
 Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
@@ -10,15 +10,15 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # --------------------------------------------------------------------------------------------------
-from library.audio import encode_flac_mp3
-from library.general import keyboard_interrupt
-from library.interface import get_options
+from anarky.library.audio import decode_flac_wav, write_tags
+from anarky.library.general import keyboard_interrupt
+from anarky.library.interface import get_options
 
 
 # Constants
 # --------------------------------------------------------------------------------------------------
-PROGRAM = 'flac2mp3'
-DESCRIPTION = 'Encodes FLAC files into the MP3 format with the maximum compression level'
+PROGRAM = 'flac2wav'
+DESCRIPTION = 'Decodes FLAC files into the WAV format'
 
 
 # Methods :: Execution and boilerplate
@@ -30,10 +30,10 @@ if __name__ == '__main__':
 
         output_files = []
         for item in files:
-            #output_file = encode_flac_mp3(item, destination, cover, tags)
-            output_file = encode_flac_mp3(item, destination)
+            #output_file = decode_flac_wav(item, destination, cover, tags)
+            output_file = decode_flac_wav(item, destination)
             if output_file:
-                output_files.append(output_file)
+                output_files.append(output_file[0])
 
     except KeyboardInterrupt:
         keyboard_interrupt()
