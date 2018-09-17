@@ -5,6 +5,11 @@ Audio encoding operations.
 Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
+from subprocess import call#, CalledProcessError, check_output, PIPE, Popen
+import logging
+
+from anarky.enums.program import Program
+from anarky.enums.audio_file import AudioFile
 
 # Logger
 # --------------------------------------------------------------------------------------------------
@@ -28,7 +33,7 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
     :return:
         The name of the output audio file
     """
-    is_program_available(Programs.flac.value)
+    is_program_available(Program.FLAC.value)
 
     if not is_wav_file(filename):
         return None
@@ -38,7 +43,7 @@ def encode_wav_flac(filename, destination, cover=None, tags=None):
     # -8 => Synonymous with -l 12 -b 4096 -m -e -r 6
     # -V => Verify a correct encoding
     # -o => Force the output file name
-    output_filename = update_path(filename, destination, AudioFile.flac.value)
+    output_filename = update_path(filename, destination, AudioFile.FLAC.value)
     flac = [Programs.flac.value, '-f8V', '-o', output_filename]
 
     # Prepares the cover file to be passed as a parameter
@@ -68,7 +73,7 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
     :param tags: The name of the file with the ID3 tags
     :return: The name of the output audio file
     """
-    is_program_available(Programs.lame.value)
+    is_program_available(Program.LAME.value)
 
     if not is_wav_file(filename):
         return None
@@ -78,8 +83,8 @@ def encode_wav_mp3(filename, destination, cover=None, tags=None):
     # -q 0            => Highest quality, very slow
     # --preset insane => Type of the quality settings
     # --id3v2-only    => Add only a version 2 tag
-    output_filename = update_path(filename, destination, AudioFile.mp3.value)
-    lame = [Programs.lame.value, '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only']
+    output_filename = update_path(filename, destination, AudioFile.MP3.value)
+    lame = [Program.LAME.value, '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only']
 
     # Prepares the cover file to be passed as a parameter
     # --ti <file> => Audio/song albumArt (jpeg/png/gif file, v2.3 tag)

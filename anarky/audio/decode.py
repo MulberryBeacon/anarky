@@ -5,6 +5,11 @@ Audio decoding operations.
 Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
+from subprocess import call
+import logging
+
+from anarky.enums.program import Program
+from anarky.enums.audio_file import AudioFile
 
 # Logger
 # --------------------------------------------------------------------------------------------------
@@ -29,7 +34,7 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
     :return:
         A tuple with three file names: output audio file, album art file and ID3 tags file
     """
-    is_program_available(Programs.flac.value)
+    is_program_available(Program.FLAC.value)
 
     if not is_flac_file(filename):
         return None
@@ -38,8 +43,8 @@ def decode_flac_wav(filename, destination, extract_cover=False, extract_tags=Fal
     # -d => Decode (the default behavior is to encode)
     # -f => Force overwriting of output files
     # -o => Force the output file name
-    output_filename = update_path(filename, destination, AudioFile.wav.value)
-    call([Programs.flac.value, '-df', filename, '-o', output_filename])
+    output_filename = update_path(filename, destination, AudioFile.WAV.value)
+    call([Program.FLAC.value, '-df', filename, '-o', output_filename])
 
     # Checks if both cover and tags should be retrieved
     cover = get_cover(filename, destination) if extract_cover else None
