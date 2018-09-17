@@ -1,6 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf8 -*-
-
 """
 Decodes FLAC files into the WAV format.
 
@@ -10,7 +8,8 @@ License: MIT (see LICENSE for details)
 
 # Module import
 # --------------------------------------------------------------------------------------------------
-from anarky.library.audio import decode_flac_wav, write_tags
+from anarky.audio.decode import decode_flac_wav
+from anarky.library.audio import write_tags
 from anarky.library.general import keyboard_interrupt
 from anarky.library.interface import get_options
 
@@ -21,9 +20,9 @@ PROGRAM = 'flac2wav'
 DESCRIPTION = 'Decodes FLAC files into the WAV format'
 
 
-# Methods :: Execution and boilerplate
+# Methods :: Execution
 # --------------------------------------------------------------------------------------------------
-if __name__ == '__main__':
+def run():
     try:
         #(files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION, True)
         (files, destination) = get_options(PROGRAM, DESCRIPTION, True)
