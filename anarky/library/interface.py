@@ -29,7 +29,7 @@ ERROR_EMPTY_LIST = 'The list of input files is empty!'
 # Project information
 # --------------------------------------------------------------------------------------------------
 __author__ = 'Eduardo Ferreira'
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 __license__ = 'MIT'
 
 

@@ -1,47 +1,22 @@
-#!/usr/bin/python
 # -*- coding: utf8 -*-
-
 """
 Encodes WAV files into the FLAC format with the maximum compression level.
 
 Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
-
-# Module import
-# --------------------------------------------------------------------------------------------------
-from anarky.library.audio import encode_wav_flac, read_tags
-from anarky.library.general import WARNING_NO_JSON_FILE, keyboard_interrupt
+from anarky.audio.encode import encode_wav_flac
+from anarky.enums.description import Description
+from anarky.enums.script import Script
+from anarky.library.general import keyboard_interrupt
 from anarky.library.interface import get_options
-#import logging
 
-
-# Logger
-# --------------------------------------------------------------------------------------------------
-#logging.basicConfig(level=logging.INFO)
-#_logger = logging.getLogger(__name__)
-
-
-# Constants
-# --------------------------------------------------------------------------------------------------
-PROGRAM = 'wav2flac'
-DESCRIPTION = 'Encodes WAV files into the FLAC format with the maximum compression level'
-
-
-# Methods :: Execution and boilerplate
-# --------------------------------------------------------------------------------------------------
-if __name__ == '__main__':
+def run():
     try:
-        #(files, destination, cover, tags, playlist) = get_options(PROGRAM, DESCRIPTION)
-        (files, destination) = get_options(PROGRAM, DESCRIPTION, True)
+        (files, destination) = get_options(Script.WAV2FLAC.value, Description.WAV2FLAC.value, True)
 
         output_files = []
         for item in files:
-            #file_tags = read_tags(item) if tags else None
-            #if tags and not file_tags:
-            #    _logger.warn(WARNING_NO_JSON_FILE)
-
-            #output_file = encode_wav_flac(item, destination, cover, file_tags)
             output_file = encode_wav_flac(item, destination)
             if output_file:
                 output_files.append(output_file[0])
