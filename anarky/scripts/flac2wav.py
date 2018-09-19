@@ -7,8 +7,8 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 from anarky.audio.decode import decode_flac_wav
-from anarky.enums.description import Description
-from anarky.enums.script import Script
+from anarky.enum.description import Description
+from anarky.enum.script import Script
 from anarky.library.general import keyboard_interrupt
 from anarky.library.interface import get_options
 
