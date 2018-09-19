@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+
 """
 Audio library with conversion methods.
 
@@ -189,19 +190,3 @@ def is_wav_file(filename):
             return False
 
     return 'audio/x-wav' in output
-
-
-# Methods :: External program validation
-# --------------------------------------------------------------------------------------------------
-def is_program_available(program):
-    """
-    Checks if an external program is present in the operating system.
-    :param program: The name of the external program
-    :return: True if the program is present in the operating system; False otherwise
-    """
-    # The output of the following command should be something like:
-    # flac: /usr/bin/flac /usr/share/man/man1/flac.1.gz
-    output = Popen(['whereis', program], stdout=PIPE).communicate()[0]
-    if len(output.split()) == 1:
-        _logger.error(ERROR_PROGRAM_NOT_FOUND.format(program))
-        sys.exit(1)

@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+
 """
 List of descriptions for the scripts provided by Anarky.
 

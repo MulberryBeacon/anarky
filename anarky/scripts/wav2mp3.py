@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+
 """
 Encodes WAV files into the MP3 format with the maximum compression level.
 
@@ -6,8 +7,8 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 from anarky.audio.encode import encode_wav_mp3
-from anarky.enums.description import Description
-from anarky.enums.script import Script
+from anarky.enum.description import Description
+from anarky.enum.script import Script
 from anarky.library.general import keyboard_interrupt
 from anarky.library.interface import get_options
 

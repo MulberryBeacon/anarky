@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+
 """
 Encodes WAV files into the FLAC format with the maximum compression level.
 

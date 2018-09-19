@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+
 """
 List of external programs used in the encoding and decoding operations.
 
@@ -14,3 +15,4 @@ class Program(Enum):
     GREP = 'grep'
     SED = 'sed'
     FILE = 'file'
+    WHEREIS = 'whereis'
