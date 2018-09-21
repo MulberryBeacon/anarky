@@ -17,18 +17,41 @@ logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
-def is_program_available(program: str) -> bool:
+def is_flac_file(filename):
     """
-    Checks if an external program is present in the operating system.
+    Checks if the given file is a valid FLAC audio file.
+    :param filename: The input audio file name
+    :return: True if the input file is a FLAC audio file; False otherwise
+    """
+    is_program_available(Programs.metaflac.value)
 
-    :param program:
-        The name of the external program
-    :return:
-        True if the program is present in the operating system; False otherwise
+    # Invokes the 'metaflac' program with the following arguments:
+    # --show-md5sum => Show the MD5 signature from the STREAMINFO block
+    output = ''
+    try:
+        output = check_output([Programs.metaflac.value, '--show-md5sum', filename]).decode(ENCODING)
+    except CalledProcessError as e:
+        if e.returncode == 1:
+            return False
+
+    return match(r'[a-z0-9]+', output)
+
+
+def is_wav_file(filename):
     """
-    # The output of the following command should be something like:
-    # flac: /usr/bin/flac /usr/share/man/man1/flac.1.gz
-    output = Popen([Program.WHEREIS.value, program], stdout=PIPE).communicate()[0]
-    if len(output.split()) == 1:
-        _logger.error('Program \'{}\' was not found!'.format(program))
-        sys.exit(1)
+    Checks if the given file is a valid WAV audio file.
+    :param filename: The input audio file name
+    :return: True if the input file is a WAV audio file; False otherwise
+    """
+    is_program_available(Programs.file.value)
+
+    # Invokes the 'file' program with the following arguments:
+    # --mime-type => Output the MIME type
+    output = ''
+    try:
+        output = check_output([Programs.file.value, '--mime-type', filename]).decode(ENCODING)
+    except CalledProcessError as e:
+        if e.returncode == 1:
+            return False
+
+    return 'audio/x-wav' in output
