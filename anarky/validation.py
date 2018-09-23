@@ -9,15 +9,10 @@ License: MIT (see LICENSE for details)
 
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
 from re import match
-import logging
 import sys
 
 from anarky.enum.program import Program
 from anarky.utils import ENCODING
-
-
-logging.basicConfig(level=logging.INFO)
-_logger = logging.getLogger(__name__)
 
 
 def is_program_available(program: str) -> bool:
@@ -32,10 +27,7 @@ def is_program_available(program: str) -> bool:
     # The output of the following command should be something like:
     # flac: /usr/bin/flac /usr/share/man/man1/flac.1.gz
     output = Popen([Program.WHEREIS.value, program], stdout=PIPE).communicate()[0]
-    if len(output.split()) == 1:
-        _logger.error('Program \'{}\' was not found!'.format(program))
-        sys.exit(1)
-    # TODO: needs to return a boolean
+    return len(output.split()) > 1:
 
 
 def is_flac_file(filename: str) -> bool:

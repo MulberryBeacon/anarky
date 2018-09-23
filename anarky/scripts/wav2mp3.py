@@ -10,8 +10,8 @@ License: MIT (see LICENSE for details)
 from anarky.audio.encode import encode_wav_mp3
 from anarky.enum.description import Description
 from anarky.enum.script import Script
-from anarky.library.general import keyboard_interrupt
-from anarky.library.interface import get_options
+from anarky.utils import keyboard_interrupt
+from anarky.interface import get_options
 
 def run():
     try:

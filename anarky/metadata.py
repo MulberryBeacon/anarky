@@ -1,36 +1,20 @@
 # -*- coding: utf8 -*-
 
 """
-Audio library with conversion methods.
+Audio metadata management operations.
 
 Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-# Module import
-# --------------------------------------------------------------------------------------------------
-from anarky.library.general import is_string_empty, update_extension, update_path
-
-from enum import Enum
 from json import dump, load
-from os.path import basename, join
-from re import match
+from os.path import join
 from subprocess import call, CalledProcessError, check_output, PIPE, Popen
-import logging
 import sys
 
-# Logger
-# --------------------------------------------------------------------------------------------------
-logging.basicConfig(level=logging.INFO)
-_logger = logging.getLogger(__name__)
+from anarky.enum.program import Program
+from anarky.utils import ENCODING, is_string_empty, update_extension, update_path
 
-# Constants :: Error messages
-# --------------------------------------------------------------------------------------------------
-ERROR_PROGRAM_NOT_FOUND = 'Program \'{}\' was not found!'
-
-# Constants :: Lists and file extensions
-# --------------------------------------------------------------------------------------------------
-ENCODING = 'utf-8'
 
 """
 TITLE       : Track/Work name
@@ -59,30 +43,29 @@ TAGS = {
     'TRACKTOTAL': ''
 }
 
-# Methods :: Album cover management
-# --------------------------------------------------------------------------------------------------
-def get_cover(filename, destination):
+
+def get_cover(filename: str, destination: str) -> str:
     """
     Retrieves the front cover art file from a FLAC audio file and stores it in the destination
     directory.
-    :param filename: The input audio file name
-    :param destination: The destination where the output file will be stored
-    ;return: The name of the album art file
-    """
-    is_program_available(Programs.metaflac.value)
-    is_program_available(Programs.grep.value)
-    is_program_available(Programs.sed.value)
 
+    :param filename:
+        The input audio file name
+    :param destination:
+        The destination where the output file will be stored
+    :return:
+        The name of the album art file
+    """
     # Prepares the 'metaflac' program arguments:
     # --list       => Lists the full stack of metadata
     # --block-type => Comma-separated list of block types to be included
-    metaflac = [Programs.metaflac.value, '--list', '--block-type=PICTURE', filename]
+    metaflac = [Program.METAFLAC.value, '--list', '--block-type=PICTURE', filename]
 
     # Prepares the 'grep' program arguments (looks for description parameter)
-    grep = [Programs.grep.value, 'description:']
+    grep = [Program.GREP.value, 'description:']
 
     # Prepares the 'sed' program arguments (the regular expression removes the parameter name)
-    sed = [Programs.sed.value, 's/.*: //']
+    sed = [Program.SED.value, 's/.*: //']
 
     # Invokes the 'metaflac', 'grep' and 'sed' programs to retrieve the cover file name
     p1 = Popen(metaflac, stdout=PIPE)
@@ -97,18 +80,19 @@ def get_cover(filename, destination):
     # Prepares the 'metaflac' program arguments:
     # --export-picture-to => Export PICTURE block to a file
     cover = join(destination, cover)
-    call([Programs.metaflac.value, '--export-picture-to=' + cover, filename])
+    call([Program.METAFLAC.value, '--export-picture-to=' + cover, filename])
 
     return cover
 
 
-# Methods :: Tag management
-# --------------------------------------------------------------------------------------------------
-def read_tags(filename):
+def read_tags(filename: str) -> str:
     """
     Reads a JSON file with ID3 tags.
-    :param filename: The input audio file name
-    :return: The name of the ID3 tags file
+
+    :param filename:
+        The input audio file name
+    :return:
+        The name of the ID3 tags file
     """
     try:
         with open(update_extension(filename, '.json'), 'r') as tags_file:
@@ -119,30 +103,34 @@ def read_tags(filename):
     return tags
 
 
-def write_tags(filename, tags):
+def write_tags(filename: str, tags: list(str)):
     """
     Writes ID3 tags to a JSON file.
-    :param filename: The input audio file name
-    :param tags: The list of ID3 tags written to the audio file
+
+    :param filename:
+        The input audio file name
+    :param tags:
+        The list of ID3 tags written to the audio file
     """
     with open(update_extension(filename, '.json'), 'w') as tags_file:
         dump(tags, tags_file, indent=4)
 
 
-def get_tags(filename):
+def get_tags(filename: str) -> list(str):
     """
     Retrieves the tag values of a FLAC audio file.
-    :param filename: The input audio file name
-    :return: The list of ID3 tags retrieved from the audio file
-    """
-    is_program_available(Programs.metaflac.value)
 
+    :param filename:
+        The input audio file name
+    :return:
+        The list of ID3 tags retrieved from the audio file
+    """
     tags = {}
     for tag in TAGS:
 
         # Invokes the 'metaflac' program with the following arguments:
         # --show-tag => Shows the value of the given tag
-        p = Popen([Programs.metaflac.value, '--show-tag=' + tag, filename], stdout=PIPE)
+        p = Popen([Program.METAFLAC.value, '--show-tag=' + tag, filename], stdout=PIPE)
         value = p.stdout.read().decode(ENCODING).rstrip('\n')
         if value:
             tags[tag] = value.split('=')[1]
