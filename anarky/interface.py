@@ -12,10 +12,11 @@ License: MIT (see LICENSE for details)
 # --------------------------------------------------------------------------------------------------
 from os import walk
 from os.path import isdir, isfile, join
-
 import argparse
 import logging
 import sys
+
+from .__version__ import __version__
 
 
 # Constants
@@ -24,13 +25,6 @@ ERROR = "{} '{}' is not available (doesn't exist or no privileges to access it)!
 ERROR_INVALID = "{} '{}' is invalid!"
 ERROR_INVALID_LIST = 'The list of input files is invalid!'
 ERROR_EMPTY_LIST = 'The list of input files is empty!'
-
-
-# Project information
-# --------------------------------------------------------------------------------------------------
-__author__ = 'Eduardo Ferreira'
-__version__ = '0.0.3'
-__license__ = 'MIT'
 
 
 # Logger
@@ -112,21 +106,6 @@ def parse_options(program, description, decode=False):
     # Defines the parent parser
     parser = argparse.ArgumentParser(prog=program, description=description)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-    # TODO: keeping only the parameters for input files and output location because they will only
-    # be tackled in a future version
-    """
-    parser.add_argument('-p', '--playlist', action='store_true', default='False',
-        help='create playlist file')
-    tags_help = '{} ID3 tags'.format('extract' if decode else 'add')
-    parser.add_argument('-t', '--tags', action='store_true', help=tags_help)
-    cover_help = '{} album art'
-    if decode:
-        parser.add_argument('-c', '--cover', action='store_true',
-            help=cover_help.format('extract'))
-    else:
-        parser.add_argument('-c', '--cover', metavar='IMG', dest='cover',
-            help=cover_help.format('add'))    
-    """
     group = parser.add_argument_group('options')
     group.add_argument('-f', '--files', nargs='+', metavar='FILES', dest='input_files',
         help='input files', required=True)
