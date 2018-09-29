@@ -12,7 +12,7 @@ from subprocess import call
 from anarky.audio.decode import decode_flac_wav
 from anarky.enum.program import Program
 from anarky.enum.audio_file import AudioFile
-from anarky.library.general import update_path
+from anarky.utils import update_path
 
 
 def encode_wav_flac(filename: str, destination: str) -> str:
