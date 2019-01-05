@@ -1,7 +1,7 @@
 # Anarky
 
-A set of simple programs for encoding and decoding between several types of
-audio files.
+A set of workflows for encoding and decoding between several types of audio
+files.
 
 ## Programs
 
@@ -73,8 +73,8 @@ See [CHANGELOG](CHANGELOG.md) for details.
 
 ## Dependencies
 
-All development and testing activities are carried out on Mac OS X 10.11.3 using
-Python 3.5.1. The following packages are required:
+All development and testing activities are carried out on Ubuntu 18.10 using
+Python 3.6.7. The following packages are required:
 
 * `lame`
 * `flac`
@@ -82,61 +82,57 @@ Python 3.5.1. The following packages are required:
 
 ## Code metrics
 
-* CLOC
+`CLOC`
 
-```sh
-http://cloc.sourceforge.net v 1.60  T=0.01 s (892.6 files/s, 95000.5 lines/s)
--------------------------------------------------------------------------------
-File                             blank        comment           code
--------------------------------------------------------------------------------
-audio.py                            64            173            117
-interface.py                        28             51             59
-wav2flac.py                         13             15             23
-wav2mp3.py                          13             15             23
-flac2wav.py                         10             13             19
-flac2mp3.py                         10             13             18
-general.py                          15             41             12
--------------------------------------------------------------------------------
-SUM:                               153            321            271
--------------------------------------------------------------------------------
+    http://cloc.sourceforge.net v 1.60  T=0.01 s (892.6 files/s, 95000.5 lines/s)
+    -------------------------------------------------------------------------------
+    File                             blank        comment           code
+    -------------------------------------------------------------------------------
+    audio.py                            64            173            117
+    interface.py                        28             51             59
+    wav2flac.py                         13             15             23
+    wav2mp3.py                          13             15             23
+    flac2wav.py                         10             13             19
+    flac2mp3.py                         10             13             18
+    general.py                          15             41             12
+    -------------------------------------------------------------------------------
+    SUM:                               153            321            271
+    -------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------
-Language                     files          blank        comment           code
--------------------------------------------------------------------------------
-Python                           7            153            321            271
--------------------------------------------------------------------------------
-SUM:                             7            153            321            271
--------------------------------------------------------------------------------
-```
+    -------------------------------------------------------------------------------
+    Language                     files          blank        comment           code
+    -------------------------------------------------------------------------------
+    Python                           7            153            321            271
+    -------------------------------------------------------------------------------
+    SUM:                             7            153            321            271
+    -------------------------------------------------------------------------------
 
-* SLOCCount
+`SLOCCount`
 
-```sh
-SLOC	Directory	SLOC-by-Language (Sorted)
-271     top_dir     python=271
+    SLOC    Directory   SLOC-by-Language (Sorted)
+    271     top_dir     python=271
 
-Totals grouped by language (dominant language first):
-python:         271 (100.00%)
+    Totals grouped by language (dominant language first):
+    python:         271 (100.00%)
 
-Total Physical Source Lines of Code (SLOC)                = 271
-Development Effort Estimate, Person-Years (Person-Months) = 0.05 (0.61)
- (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
-Schedule Estimate, Years (Months)                         = 0.17 (2.07)
- (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
-Estimated Average Number of Developers (Effort/Schedule)  = 0.29
-Total Estimated Cost to Develop                           = $ 1,755
- (average salary = $57,618/year, overhead = 0.60).
-SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
-SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
-SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
-redistribute it under certain conditions as specified by the GNU GPL license;
-see the documentation for details.
-Please credit this data as \"generated using David A. Wheeler's 'SLOCCount'.\"
-```
+    Total Physical Source Lines of Code (SLOC)                = 271
+    Development Effort Estimate, Person-Years (Person-Months) = 0.05 (0.61)
+      (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+    Schedule Estimate, Years (Months)                         = 0.17 (2.07)
+      (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+    Estimated Average Number of Developers (Effort/Schedule)  = 0.29
+    Total Estimated Cost to Develop                           = $ 1,755
+      (average salary = $57,618/year, overhead = 0.60).
+    SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+    SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+    SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+    redistribute it under certain conditions as specified by the GNU GPL license;
+    see the documentation for details.
+    Please credit this data as \"generated using David A. Wheeler's 'SLOCCount'.\"
 
 ## License
 
-Copyright © 2012-2016 Eduardo Ferreira
+Copyright © 2012-2019 Eduardo Ferreira
 
 The code in this repository is MIT licensed, and therefore free to use as you
 please for commercial or non-commercial purposes (see [LICENSE](LICENSE) for

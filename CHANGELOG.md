@@ -1,5 +1,11 @@
 ## History
 
+Version 0.0.4
+
+*
+*
+*
+
 Version 0.0.3
 
 * Added input parameter validation for the methods in the interface module
