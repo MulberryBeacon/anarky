@@ -1,11 +1,20 @@
 ## History
 
+Version 0.0.4
+
+* Started (yet another) full rewrite of the application to convert it to Python 3
+* Split the audio manipulation code into two small libraries and created a module for them
+* Created a module with all the enums
+* Created a module for the scripts that are available as executables
+* Moved all the metadata management code to its own module
+* Included `pipenv` as the dependency management tool
+
 Version 0.0.3
 
 * Added input parameter validation for the methods in the interface module
 * Added unit tests for the interface module
-* Created a package for the library modules
-* Created a package for the unit tests
+* Created a module for the library modules
+* Created a module for the unit tests
 * Reset the input parameters for the various scripts
   * Kept the input and output parameters
   * Removed all the remaining parameters (related to ID3 tags, album cover art and playlists)

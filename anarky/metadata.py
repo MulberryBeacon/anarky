@@ -116,7 +116,7 @@ def write_tags(filename: str, tags: list(str)):
         dump(tags, tags_file, indent=4)
 
 
-def get_tags(filename: str) -> list(str):
+def get_tags(filename: str) -> dict:
     """
     Retrieves the tag values of a FLAC audio file.
 

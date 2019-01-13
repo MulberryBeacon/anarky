@@ -27,7 +27,7 @@ def is_program_available(program: str) -> bool:
     # The output of the following command should be something like:
     # flac: /usr/bin/flac /usr/share/man/man1/flac.1.gz
     output = Popen([Program.WHEREIS.value, program], stdout=PIPE).communicate()[0]
-    return len(output.split()) > 1:
+    return len(output.split()) > 1
 
 
 def is_flac_file(filename: str) -> bool:

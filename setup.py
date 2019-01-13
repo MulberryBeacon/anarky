@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 Setup module.
 
@@ -6,17 +7,12 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-# Module import
-# --------------------------------------------------------------------------------------------------
 from setuptools import setup, find_packages
 
-# Setup
-# --------------------------------------------------------------------------------------------------
 setup(
     name='anarky',
-    version='0.0.1',
-    description='A set of simple programs for encoding and decoding between several types of audio\
-                 files.',
+    version='0.0.4',
+    description='A set of workflows for encoding and decoding between several types of audio files.',
     author='Eduardo Ferreira',
     packages=find_packages(),
     entry_points={
