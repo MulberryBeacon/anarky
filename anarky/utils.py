@@ -7,9 +7,7 @@ Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
 
-from os.path import basename, join, splitext
 from pathlib import Path
-
 
 ENCODING = 'utf-8'
 
@@ -26,7 +24,7 @@ def is_string_empty(string: str) -> bool:
     return string is None or len(string) == 0
 
 
-def update_extension(filename: str, extension: str = '') -> str:
+def update_extension(filename: str, extension: str = '') -> Path:
     """
     Updates the extension of the given file.
     If an extension is not provided, the extension from the given file is stripped.
@@ -38,10 +36,10 @@ def update_extension(filename: str, extension: str = '') -> str:
     :return:
         The name of the file updated with the given extension
     """
-    return Path(filename).stem + extension
+    return Path(filename).resolve().with_suffix(extension)
 
 
-def update_path(filename: str, directory: str, extension: str = '') -> str:
+def update_path(filename: str, directory: str, extension: str = '') -> Path:
     """
     Updates the path and extension of the given file.
     If an extension is not provided, the extension from the given file is stripped.
@@ -55,8 +53,4 @@ def update_path(filename: str, directory: str, extension: str = '') -> str:
     :return:
         The name of the file updated with the given directory and extension
     """
-    # TODO: Measure performance for possible solutions
-    # return splitext(join(directory, basename(filename)))[0] + extension
-    # return join(directory, basename(splitext(filename)[0] + extension))
-    return join(directory, splitext(basename(filename))[0] + extension)
-    # return Path(filename)
+    return Path(directory, Path(update_extension(filename, extension)).name).resolve()

@@ -74,7 +74,7 @@ def encode_flac_mp3(filename: str, destination: str) -> str:
         The name of the output audio file
     """
     wav_file = decode_flac_wav(filename, destination)
-    if wav_file:
-        return encode_wav_mp3(wav_file[0], destination)
+    if wav_file.is_file():
+        return encode_wav_mp3(str(wav_file), destination)
 
     return None
