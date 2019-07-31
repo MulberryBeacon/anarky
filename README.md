@@ -1,7 +1,6 @@
-# Anarky
+# anarky
 
-A set of workflows for encoding and decoding between several types of audio
-files.
+Encodes and decodes between several types of audio files.
 
 ## Programs
 
@@ -106,29 +105,6 @@ Python 3.6.7. The following packages are required:
     -------------------------------------------------------------------------------
     SUM:                             7            153            321            271
     -------------------------------------------------------------------------------
-
-`SLOCCount`
-
-    SLOC    Directory   SLOC-by-Language (Sorted)
-    271     top_dir     python=271
-
-    Totals grouped by language (dominant language first):
-    python:         271 (100.00%)
-
-    Total Physical Source Lines of Code (SLOC)                = 271
-    Development Effort Estimate, Person-Years (Person-Months) = 0.05 (0.61)
-      (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
-    Schedule Estimate, Years (Months)                         = 0.17 (2.07)
-      (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
-    Estimated Average Number of Developers (Effort/Schedule)  = 0.29
-    Total Estimated Cost to Develop                           = $ 1,755
-      (average salary = $57,618/year, overhead = 0.60).
-    SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
-    SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
-    SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
-    redistribute it under certain conditions as specified by the GNU GPL license;
-    see the documentation for details.
-    Please credit this data as \"generated using David A. Wheeler's 'SLOCCount'.\"
 
 ## License
 
