@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 setup(
     name='anarky',
     version='0.0.4',
-    description='A set of workflows for encoding and decoding between several types of audio files.',
+    description='Encodes and decodes between several types of audio files.',
     author='Eduardo Ferreira',
     packages=find_packages(),
     entry_points={
