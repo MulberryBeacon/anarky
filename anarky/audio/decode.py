@@ -17,7 +17,7 @@ from anarky.utils import update_path
 def decode_flac_wav(filename: str, destination: str) -> str:
     """
     Decodes a FLAC audio file, generating the corresponding WAV audio file.
-    
+
     The 'flac' program is executed with the following arguments:
       * -d => Decode (the default behavior is to encode)
       * -f => Force overwriting of output files

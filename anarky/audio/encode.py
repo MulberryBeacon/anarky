@@ -56,7 +56,9 @@ def encode_wav_mp3(filename: str, destination: str) -> str:
         The name of the output audio file
     """
     output_filename = update_path(filename, destination, AudioFile.MP3.value)
-    call([Program.LAME.value, '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only', filename, output_filename])
+    call([Program.LAME.value, '-b', '320', '-q', '0', '--preset', 'insane', '--id3v2-only',
+          filename,
+          output_filename])
 
     return output_filename
 

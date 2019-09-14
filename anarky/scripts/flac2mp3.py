@@ -13,6 +13,9 @@ from anarky.enum.script import Script
 from anarky.interface import get_options
 
 def run():
+    """
+    Runs the progrm to encode FLAC files into MP3 files.
+    """
     (files, destination) = get_options(Script.FLAC2MP3.value, Description.FLAC2MP3.value, True)
     for item in files:
         encode_flac_mp3(item, destination)
