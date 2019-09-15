@@ -59,12 +59,12 @@ and output files be defined explicitly.
 A specific WAV file is selected and the resulting FLAC file will be stored in
 the given folder.
 
-    wav2flac -f lovely_song.wav -d ~/new_songs/
+    $ wav2flac -f lovely_song.wav -d ~/new_songs/
 
 A specific FLAC file is selected and the resulting WAV file will be stored in
 the given folder, along with the extracted cover art and ID3 tags file.
 
-    flac2wav -f lovely_song.flac -d ~/new_songs/ -c -t
+    $ flac2wav -f lovely_song.flac -d ~/new_songs/ -c -t
 
 ## Versions
 
@@ -81,29 +81,14 @@ Python 3.6.7. The following packages are required:
 
 ## Code metrics
 
-`CLOC`
-
-    http://cloc.sourceforge.net v 1.60  T=0.01 s (892.6 files/s, 95000.5 lines/s)
-    -------------------------------------------------------------------------------
-    File                             blank        comment           code
-    -------------------------------------------------------------------------------
-    audio.py                            64            173            117
-    interface.py                        28             51             59
-    wav2flac.py                         13             15             23
-    wav2mp3.py                          13             15             23
-    flac2wav.py                         10             13             19
-    flac2mp3.py                         10             13             18
-    general.py                          15             41             12
-    -------------------------------------------------------------------------------
-    SUM:                               153            321            271
-    -------------------------------------------------------------------------------
-
+    github.com/AlDanial/cloc v 1.80  T=0.50 s (40.0 files/s, 1932.0 lines/s)
     -------------------------------------------------------------------------------
     Language                     files          blank        comment           code
     -------------------------------------------------------------------------------
-    Python                           7            153            321            271
+    Python                          18            165            343            290
+    Markdown                         2             44              0            124
     -------------------------------------------------------------------------------
-    SUM:                             7            153            321            271
+    SUM:                            20            209            343            414
     -------------------------------------------------------------------------------
 
 ## License
