@@ -6,9 +6,13 @@ List of descriptions for the scripts provided by Anarky.
 Author: Eduardo Ferreira
 License: MIT (see LICENSE for details)
 """
+
 from enum import Enum
 
 class Description(Enum):
+    """
+    Descriptions of the available scripts.
+    """
     FLAC2WAV = 'Decodes FLAC files into the WAV format'
     FLAC2MP3 = 'Encodes FLAC files into the MP3 format with the maximum compression level'
     WAV2FLAC = 'Encodes WAV files into the FLAC format with the maximum compression level'
